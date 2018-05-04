@@ -1,21 +1,34 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import NavBar from './components/common/NavBar';
+import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
+import Body from './components/Body';
 class App extends Component {
+  componentDidUpdate(prevProps) {
+    const { history, location } = this.props;
+    if (
+      history.action === 'PUSH' &&
+      location.pathname !== prevProps.location.pathname
+    ) {
+      window.scrollTo(0, 0);
+    }
+  }
+
   render() {
+    console.log(this.props);
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+        <div className="App">
+          <NavBar />
+          <div style={{ padding: 57 }}>
+            <Switch>
+              <Route exact path="/" component={Body} />
+              <Route exact path="/hi1" component={Body} />
+              <Route exact path="/hi2" component={Body} />
+              <Redirect from="/" to="/" />
+            </Switch>
+          </div>
+        </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import addIconPath from '../../icons/add_icon.png';
 
 class Title extends Component {
   render() {
@@ -6,6 +7,7 @@ class Title extends Component {
     return (
         <div style={styles.textStyle}>
           {title}
+          <img style={styles.iconStyle} src={addIconPath} onClick={this.props.addNote} />
         </div>
     );
   }
@@ -15,13 +17,17 @@ const styles = {
   textStyle: {
     flex: 1,
     height: '30px',
-    fontSize: '1.5rem',
-    fontStyle: 'bold',
+    fontSize: '1.6rem',
+    fontWeight: '600',
     display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: 'white',
-    paddingLeft: '10px',
+    paddingTop: '3px',
+  },
+  iconStyle: {
+    width: '30px',
+    height: '30px',
   }
 };
 

@@ -4,11 +4,22 @@ import Note from './common/Note';
 
 
 class Body extends Component {
-  render() {
-    const titleComponents = data.map((e, i) =>
-      <Title title={e.title} index={i+1} />
-    );
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+    };
+  }
+  componentWillMount() {
+    data.map((e, i) => {
+      console.log('hi');
+      this.state.notes.push(
+          <Title title={e.title} index={i + 1} addNote={() => this.setState({notes: this.state.notes.concat(<Note/>)})} />
+      );
+    });
+  }
 
+  render() {
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle}>
@@ -16,7 +27,7 @@ class Body extends Component {
           </div>
         </div>
         <div style={styles.rightStyle}>
-          {titleComponents}
+          {this.state.notes}
           <Note/>
         </div>
       </div>
@@ -54,7 +65,7 @@ const styles = {
   },
   rightStyle: {
     width: '400px',
-    backgroundColor: 'red',
+    backgroundColor: '#828282',
   },
   paperStyle: {
     flex: 1,

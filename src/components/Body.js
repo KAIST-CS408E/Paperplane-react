@@ -12,14 +12,28 @@ class Body extends Component {
   }
   componentWillMount() {
     data.map((e, i) => {
-      console.log('hi');
-      this.state.notes.push(
-          <Title title={e.title} index={i + 1} addNote={() => this.setState({notes: this.state.notes.concat(<Note/>)})} />
-      );
+      this.state.notes.push(e);
     });
   }
 
+  addNote(i) {
+    this.setState(prevState => {
+      let prevNote = prevState.notes;
+      prevNote[i].notes.push(<Note/>);
+      return {notes: prevNote};
+    })
+  }
+
   render() {
+    const noteComponent = [];
+    this.state.notes.map((e, i) => {
+      noteComponent.push(
+          <Title title={e.title} index={i + 1} addNote={() => this.addNote(i)} />
+      );
+      e.notes.map((e) => {
+        noteComponent.push(<Note />);
+      })
+    });
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle}>
@@ -27,8 +41,7 @@ class Body extends Component {
           </div>
         </div>
         <div style={styles.rightStyle}>
-          {this.state.notes}
-          <Note/>
+          {noteComponent}
         </div>
       </div>
     );
@@ -38,15 +51,19 @@ class Body extends Component {
 const data = [
   {
     title: 'Introduction',
+    notes: [],
   },
   {
     title: 'Deep Image Representation',
+    notes: [],
   },
   {
     title: 'Result',
+    notes: [{title: 'State of the art result', body: 'This is total insane!'}],
   },
   {
     title: 'Discussion',
+    notes: [],
   },
 ];
 

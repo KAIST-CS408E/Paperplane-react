@@ -35,6 +35,9 @@ class Login extends Component {
           <div style={styles.buttonStyle}>
             Login
           </div>
+          <div style={{...styles.buttonStyle, backgroundColor: '#595970'}}>
+            Register
+          </div>
         </div>
       </div>
     );
@@ -71,13 +74,14 @@ const styles = {
     alignItems: 'center',
     backgroundColor: '#8B008B',
     borderRadius: '1.5rem',
-    height: '2rem',
+    height: '1.7rem',
     fontWeight: 900,
-    fontSize: '1.3rem',
+    fontSize: '1.2rem',
     width: '10rem',
+    marginTop: '5px',
   },
   loginStyle: {
-    height: '20vh',
+    height: '23vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

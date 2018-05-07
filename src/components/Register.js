@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import skyPath from '../static/el_capitan_bg.jpg';
 import TextArea from 'react-textarea-autosize';
+import axios from 'axios';
+import { REGISTER_URL } from '../constants';
 
 
 class Register extends Component {
@@ -10,9 +12,22 @@ class Register extends Component {
       id: '',
       password: '',
     };
+    this.registerUser = this.registerUser.bind(this);
   }
 
   componentWillMount() {
+  }
+
+  registerUser() {
+    const { id, password } = this.state;
+    try {
+      axios.post(REGISTER_URL, {
+        id,
+        password,
+      }).then((m) => console.log(m));
+    } catch (e) {
+      // Do something when failed
+    }
   }
 
   render() {
@@ -32,7 +47,7 @@ class Register extends Component {
                 type="text" value={this.state.password}
                 placeholder={'Password'}
                 onChange={event => this.setState({ password: event.target.value })} />
-            <div style={styles.buttonStyle}>
+            <div style={styles.buttonStyle} onClick={this.registerUser}>
               Register
             </div>
           </div>
@@ -75,6 +90,7 @@ const styles = {
     fontWeight: 900,
     fontSize: '1.3rem',
     width: '10rem',
+    marginTop: '5px',
   },
   loginStyle: {
     height: '20vh',

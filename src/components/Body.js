@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
 
@@ -8,12 +9,25 @@ class Body extends Component {
     super(props);
     this.state = {
       notes: [],
+      paperContent: {
+        __html: '',
+      },
     };
   }
   componentWillMount() {
     data.map((e, i) => {
       this.state.notes.push(e);
     });
+
+    axios.get('http://localhost:8000/api/papers/sample')
+      .then((res) => {
+        this.setState({
+          paperContent: {
+            __html: res.data,
+          },
+        });
+      })
+      .catch(alert);
   }
 
   addNote(i) {
@@ -37,7 +51,7 @@ class Body extends Component {
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle}>
-          <div style={styles.paperStyle}>
+          <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
         </div>
         <div style={styles.rightStyle}>
@@ -70,7 +84,7 @@ const data = [
 const styles = {
   backgroundStyle: {
     display: 'flex',
-    height: '100vh',
+    height: 'calc(100vh - 57px)',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -86,11 +100,13 @@ const styles = {
   },
   paperStyle: {
     flex: 1,
-    maxWidth: '1000px',
+    maxWidth: 'calc(100vw - 400px)',
     backgroundColor: 'white',
     height: '100%',
     margin: 'auto',
-  }
+    overflowY: 'scroll',
+    padding: '0 30px',
+  },
 };
 
 export default Body;

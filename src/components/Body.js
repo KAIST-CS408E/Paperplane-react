@@ -12,20 +12,51 @@ class Body extends Component {
       paperContent: {
         __html: '',
       },
+      paper: null,
+      modalContent: null,
     };
   }
+
   componentWillMount() {
     data.map((e, i) => {
       this.state.notes.push(e);
     });
 
-    axios.get('http://localhost:8000/api/papers/sample')
+    axios.get('http://localhost:8000/api/papers')
       .then((res) => {
+        const paper = res.data[0];
         this.setState({
+          paper,
           paperContent: {
-            __html: res.data,
+            __html: paper.content,
           },
         });
+
+        /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
+        setTimeout(() => {
+          const addModalListener = (item) => {
+            return (link) => {
+              link.removeAttribute('href');
+              link.addEventListener('click', () => {
+                this.setState({
+                  modalContent: {
+                    __html: item.html,
+                  },
+                });
+              });
+            };
+          };
+
+          this.state.paper.figures.forEach((figure) => {
+            const imageLinks = document.querySelectorAll(`a[href$=".${figure.number}"]`);
+            imageLinks.forEach(addModalListener(figure));
+          });
+
+          this.state.paper.equations.forEach((equation) => {
+            const equationLinks = document.querySelectorAll(`a[href$=".${equation.number}"]`);
+            equationLinks.forEach(addModalListener(equation));
+          });
+        }, 2000);
       })
       .catch(alert);
   }
@@ -48,10 +79,21 @@ class Body extends Component {
         noteComponent.push(<Note />);
       })
     });
+
+    const hideModal = () => {
+      this.setState({
+        modalContent: null,
+      });
+    };
+
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
+          </div>
+          <div style={{ ...styles.modalStyle, display: this.state.modalContent ? 'block' : 'none' }}
+               dangerouslySetInnerHTML={this.state.modalContent}
+               onClick={hideModal}>
           </div>
         </div>
         <div style={styles.rightStyle}>
@@ -106,6 +148,13 @@ const styles = {
     margin: 'auto',
     overflowY: 'scroll',
     padding: '0 30px',
+  },
+  modalStyle: {
+    backgroundColor: 'gray',
+    position: 'fixed',
+    padding: '10vh 10vw',
+    width: '80vw',
+    height: '80vh',
   },
 };
 

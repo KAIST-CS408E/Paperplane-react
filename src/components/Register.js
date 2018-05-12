@@ -10,6 +10,7 @@ class Register extends Component {
     super(props);
     this.state = {
       id: '',
+      nickname: '',
       password: '',
     };
     this.registerUser = this.registerUser.bind(this);
@@ -19,15 +20,10 @@ class Register extends Component {
   }
 
   registerUser() {
-    const { id, password } = this.state;
-    try {
-      axios.post(REGISTER_URL, {
-        id,
-        password,
-      }).then((m) => console.log(m));
-    } catch (e) {
-      // Do something when failed
-    }
+    const { id, nickname, password } = this.state;
+    axios.post(REGISTER_URL, { id, nickname, password })
+      .then((m) => this.props.history.push('/'))
+      .catch((e) => console.log(e));
   }
 
   render() {
@@ -42,6 +38,11 @@ class Register extends Component {
                 type="text" value={this.state.id}
                 placeholder={'Username'}
                 onChange={event => this.setState({ id: event.target.value })} />
+            <input
+                style={styles.titleTextArea}
+                type="text" value={this.state.nickname}
+                placeholder={'Nickname'}
+                onChange={event => this.setState({ nickname: event.target.value })} />
             <input
                 style={styles.titleTextArea}
                 type="text" value={this.state.password}

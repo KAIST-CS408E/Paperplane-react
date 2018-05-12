@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import skyPath from '../static/el_capitan_bg.jpg';
 import TextArea from 'react-textarea-autosize';
+import axios from 'axios';
+import {LOGIN_URL} from "../constants";
+import {Link} from 'react-router-dom';
+import { withCookies, Cookies } from 'react-cookie';
 
 
 class Login extends Component {
@@ -10,9 +14,25 @@ class Login extends Component {
       id: '',
       password: '',
     };
+    this.loginUser = this.loginUser.bind(this);
   }
 
   componentWillMount() {
+  }
+
+  loginUser() {
+    const { id, password } = this.state;
+    const { cookies } = this.props;
+
+    axios.post(LOGIN_URL, {id, password})
+      .then((res) => {
+        const {uid, nickname, _id} = res.data;
+        cookies.set('id', uid, { path: '/' });
+        cookies.set('nickname', nickname, { path: '/' });
+        cookies.set('_id', _id, { path: '/' });
+        this.props.history.replace('/hi2');
+      })
+      .catch((e) => console.log(e));
   }
 
   render() {
@@ -32,12 +52,14 @@ class Login extends Component {
               type="text" value={this.state.password}
               placeholder={'Password'}
               onChange={event => this.setState({ password: event.target.value })} />
-          <div style={styles.buttonStyle}>
+          <div style={styles.buttonStyle} onClick={this.loginUser}>
             Login
           </div>
-          <div style={{...styles.buttonStyle, backgroundColor: '#595970'}}>
-            Register
-          </div>
+          <Link to='/register'>
+            <div style={{...styles.buttonStyle, backgroundColor: '#595970'}} >
+              Register
+            </div>
+          </Link>
         </div>
       </div>
     );
@@ -97,4 +119,4 @@ const styles = {
   }
 };
 
-export default Login;
+export default withCookies(Login);

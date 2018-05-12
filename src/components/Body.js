@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
+import { PAPER_URL } from '../constants';
+import { withCookies } from 'react-cookie';
 
 
 class Body extends Component {
@@ -14,15 +16,20 @@ class Body extends Component {
       },
       paper: null,
       modalContent: null,
+      _id: '',
     };
   }
 
   componentWillMount() {
+    const { cookies } = this.props;
+    const _id = cookies.get('_id');
+    this.setState({_id});
+
     data.map((e, i) => {
       this.state.notes.push(e);
     });
 
-    axios.get('http://localhost:8000/api/papers')
+    axios.get(PAPER_URL)
       .then((res) => {
         const paper = res.data[0];
         this.setState({
@@ -58,7 +65,7 @@ class Body extends Component {
           });
         }, 2000);
       })
-      .catch(alert);
+      .catch();
   }
 
   addNote(i) {
@@ -158,4 +165,4 @@ const styles = {
   },
 };
 
-export default Body;
+export default withCookies(Body);

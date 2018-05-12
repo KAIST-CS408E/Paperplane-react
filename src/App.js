@@ -4,6 +4,7 @@ import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Body from './components/Body';
 import Login from './components/Login';
 import Register from './components/Register';
+import { CookiesProvider } from 'react-cookie';
 
 class App extends Component {
   constructor(props) {
@@ -27,18 +28,20 @@ class App extends Component {
     const { pathname } = location;
     const isLogin = pathname === '/' || pathname === '/register';
     return (
-      <div className="App">
-        { isLogin ? null: <NavBar /> }
-        <div style={isLogin? null : { paddingTop: 57 }}>
-        <Switch>
-          <Route exact path="/" component={Login} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/main" component={Body} />
-            <Route exact path="/hi2" component={Body} />
-            <Redirect from="/" to="/" />
-        </Switch>
+      <CookiesProvider>
+        <div className="App">
+          { isLogin ? null: <NavBar /> }
+          <div style={isLogin? null : { paddingTop: 57 }}>
+          <Switch>
+            <Route exact path="/" component={Login} />
+              <Route exact path="/register" component={Register} />
+              <Route exact path="/main" component={Body} />
+              <Route exact path="/hi2" component={Body} />
+              <Redirect from="/" to="/" />
+          </Switch>
+          </div>
         </div>
-      </div>
+      </CookiesProvider>
     );
   }
 }

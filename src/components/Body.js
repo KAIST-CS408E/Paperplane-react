@@ -14,6 +14,7 @@ class Body extends Component {
       paperContent: {
         __html: '',
       },
+      sections: [],
       paper: null,
       modalContent: null,
       _id: '',
@@ -26,15 +27,12 @@ class Body extends Component {
     const _id = cookies.get('_id');
     this.setState({_id});
 
-    data.map((e, i) => {
-      this.state.notes.push(e);
-    });
-
     axios.get(PAPER_URL)
       .then((res) => {
         const paper = res.data[0];
         this.setState({
           paper,
+          sections: paper.sections,
           paperContent: {
             __html: paper.content,
           },
@@ -43,6 +41,7 @@ class Body extends Component {
 
         /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
         setTimeout(() => {
+          this.getNote();
           const addModalListener = (item) => {
             return (link) => {
               link.removeAttribute('href');
@@ -70,33 +69,47 @@ class Body extends Component {
       .catch();
   }
 
+  getNote() {
+    const { _id, _paperID } = this.state;
+    const url = `${NOTE_URL}/?uid=${_id}&paperId=${_paperID}`;
+    axios.get(url)
+      .then((res) => {
+        const notes = res.data;
+        this.setState({notes});
+      })
+      .catch((e) => console.log(e));
+  }
+
 
   addNote(i) {
+    const { _id, _paperID } = this.state;
     this.setState(prevState => {
-      let prevNote = prevState.notes;
-      // axios.post(NOTE_URL, {id, password})
-      //   .then((res) => {
-      //     const {uid, nickname, _id} = res.data;
-      //     cookies.set('id', uid, { path: '/' });
-      //     cookies.set('nickname', nickname, { path: '/' });
-      //     cookies.set('_id', _id, { path: '/' });
-      //     this.props.history.replace('/hi2');
-      //   })
-      //   .catch((e) => console.log(e));
-      prevNote[i].notes.push(<Note/>);
-      return {notes: prevNote};
+      const data = {
+        uid: _id,
+        paperId: _paperID,
+        section: i,
+        title: '',
+        content: '',
+      };
+      axios.post(NOTE_URL, data)
+        .then((res) => {
+          this.getNote();
+        })
+        .catch((e) => console.log(e));
     })
   }
 
   render() {
     const noteComponent = [];
-    this.state.notes.map((e, i) => {
+    this.state.sections.map((e, i) => {
       noteComponent.push(
-          <Title title={e.title} index={i + 1} addNote={() => this.addNote(i)} />
+          <Title title={e.name} index={i + 1} addNote={() => this.addNote(i)} />
       );
-      e.notes.map((e) => {
-        noteComponent.push(<Note />);
-      })
+      if (this.state.notes.hasOwnProperty(i)) {
+        this.state.notes[i].map((e) => {
+          noteComponent.push(<Note _id={e._id} title={e.title} content={e.content}/>);
+        })
+      }
     });
 
     const hideModal = () => {
@@ -122,25 +135,6 @@ class Body extends Component {
     );
   }
 }
-
-const data = [
-  {
-    title: 'Introduction',
-    notes: [],
-  },
-  {
-    title: 'Deep Image Representation',
-    notes: [],
-  },
-  {
-    title: 'Result',
-    notes: [{title: 'State of the art result', body: 'This is total insane!'}],
-  },
-  {
-    title: 'Discussion',
-    notes: [],
-  },
-];
 
 const styles = {
   backgroundStyle: {

@@ -67,9 +67,9 @@ class Note extends Component {
     const figureRegex = /(?!<a class="embed-F\d+">)fig(?:ure)?\s*(\d+)(?!<\/a>)/gi;
     const equationRegex = /(?!<a class="embed-E\d+">)eq(?:uation)?\s*(\d+)(?!<\/a>)/gi;
 
-    return this.state.content
-      .replace(figureRegex, (match, number) => `<a class="embed-F${number}">${match}</a>`)
-      .replace(equationRegex, (match, number) => `<a class="embed-E${number}">${match}</a>`);
+    return this.state.html
+      .replace(figureRegex, (match, number) => `<a class="embed-F${number}" style="text-decoration: underline;">${match}</a>`)
+      .replace(equationRegex, (match, number) => `<a class="embed-E${number}" style="text-decoration: underline;">${match}</a>`);
   }
 
   /* TODO: REALLY, REALLY BAD IDEA to use debounce here... */
@@ -94,7 +94,7 @@ class Note extends Component {
   render() {
     const handleChange = function (event) {
       const contentEmbededNote = event.target.value;
-      const regex = /<a class="embed-[FE]\d+">|<\/a>/gi
+      const regex = /<a class="embed-[FE]\d+"((?!>)[\w\W])*>|<\/a>/gi
       const pureTextNote = contentEmbededNote.replace(regex, match => '');
       this.setState({
         content: pureTextNote,

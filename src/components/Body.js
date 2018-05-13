@@ -49,6 +49,7 @@ class Body extends Component {
           const addModalListener = (item) => {
             return (link) => {
               link.removeAttribute('href');
+              link.style.textDecoration = 'underline';
               link.addEventListener('click', () => this.showModal(item, 'paper'));
             };
           };

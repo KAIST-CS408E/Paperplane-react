@@ -77,16 +77,6 @@ const styles = {
     backgroundColor: 'white',
     paddingLeft: '10px',
   },
-  textArea: {
-    borderWidth: '1px',
-    borderColor: '#efefef',
-    padding: '0.8rem',
-    fontSize: '1.2rem',
-    fontWeight: 400,
-    lineHeight: '160%',
-    width: '90%',
-    outline: 'none',
-  },
   titleTextArea: {
     borderWidth: '0px',
     borderBottomWidth: '1px',

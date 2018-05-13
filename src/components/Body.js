@@ -81,23 +81,51 @@ class Body extends Component {
   }
 
 
-  addNote(i) {
+  addNote(section) {
     const { _id, _paperID } = this.state;
     this.setState(prevState => {
-      const data = {
+      let newNote = {
         uid: _id,
         paperId: _paperID,
-        section: i,
+        section: section,
         title: '',
         content: '',
       };
-      axios.post(NOTE_URL, data)
+      let prevNotes = prevState.notes;
+      let noteList = [];
+      let noteIndex = 0;
+      if (prevNotes.hasOwnProperty(section)) {
+        let noteList = prevNotes[section];
+        let noteIndex = noteList.length;
+        noteList.splice(noteIndex, 0, newNote);
+      }
+      else {
+        noteList.splice(noteIndex, 0, newNote);
+        prevNotes[section] = noteList;
+      }
+      axios.post(NOTE_URL, newNote)
         .then((res) => {
           console.log(res);
-          this.getNote();
+          // this.getNote();
+          prevNotes[section][noteIndex] = {...newNote, _id: res.data._id};
+          this.setState({notes: prevNotes});
         })
         .catch((e) => console.log(e));
+      return {
+        notes: prevNotes,
+      };
     })
+  }
+
+  deleteNote(section, noteId) {
+    this.setState(prevState => {
+      let prevNotes = prevState.notes;
+      let noteList = prevNotes[section];
+      noteList.splice(noteId, 1);
+      return {
+        notes: prevNotes,
+      };
+    });
   }
 
   showModal(content, type) {
@@ -115,8 +143,10 @@ class Body extends Component {
           <Title title={e.name} index={i + 1} addNote={() => this.addNote(i)} />
       );
       if (this.state.notes.hasOwnProperty(i)) {
-        this.state.notes[i].map((e) => {
-          noteComponent.push(<Note noteId={e._id} title={e.title} content={e.content} paper={this.state.paper} showModal={this.showModal} getNote={this.getNote}/>);
+        this.state.notes[i].map((e1, i1) => {
+          console.log(i)
+          console.log(e1)
+          noteComponent.push(<Note noteId={e1._id} title={e1.title} content={e1.content} paper={this.state.paper} showModal={this.showModal} deleteNote={() => this.deleteNote(i, i1)}/>);
         })
       }
     });

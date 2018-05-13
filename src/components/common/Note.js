@@ -42,21 +42,27 @@ class Note extends Component {
 
   saveNote() {
     console.log('debounced!');
-    const url = `${NOTE_URL}/${this.state.noteId}`;
+    const url = `${NOTE_URL}/${this.props.noteId}`;
     const { title, content } = this.state;
     const data = { title, content };
-    axios.put(url, data)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => console.log(e));
+    console.log(this.props.noteId);
+    if (this.props.noteId) {
+      axios.put(url, data)
+          .then((res) => {
+          })
+          .catch((e) => console.log(e));
+    }
+    else {
+      console.log('failed, check Note.js 56');
+      this.saveNote();
+    }
   }
 
   deleteNote(e) {
-    const url = `${NOTE_URL}/${this.state.noteId}`;
+    const url = `${NOTE_URL}/${this.props.noteId}`;
+    this.props.deleteNote();
     axios.delete(url)
       .then((res) => {
-        this.props.getNote();
       })
       .catch((err) => console.log(err));
     e.stopPropagation();

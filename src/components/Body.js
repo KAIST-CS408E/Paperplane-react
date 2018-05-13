@@ -7,6 +7,16 @@ import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 
 
+const RECOMMEND = [
+  {
+    section: 3,
+    title: 'test recommend title',
+    content: 'test recommend content',
+    wasShown: false,
+  },
+];
+
+
 class Body extends Component {
   constructor(props) {
     super(props);
@@ -20,16 +30,15 @@ class Body extends Component {
       modalContent: null,
       _id: '',
       _paperID: '',
-      recommend: {
-        title: 'test recommend',
-        content: 'I recommend you to implement something RIGHT NOW!',
-      },
+      recommend: null,
+      recommendElems: [],
     };
 
     this.showModal = this.showModal.bind(this);
     this.getNote = this.getNote.bind(this);
     this.addRecommendNote = this.addRecommendNote.bind(this);
     this.cancelRecommend = this.cancelRecommend.bind(this);
+    this.detectRecommend = this.detectRecommend.bind(this);
   }
 
   componentWillMount() {
@@ -49,6 +58,7 @@ class Body extends Component {
           _paperID: paper._id,
         });
 
+        /* Add onClickListener to figures and equations. */
         /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
         setTimeout(() => {
           this.getNote();
@@ -68,6 +78,11 @@ class Body extends Component {
           this.state.paper.equations.forEach((equation) => {
             const equationLinks = document.querySelectorAll(`a[href$=".${equation.number}"]`);
             equationLinks.forEach(addModalListener(equation));
+          });
+
+          /* Save recommend elements. */
+          this.setState({
+            recommendElems: RECOMMEND.map(recommend => document.getElementById(`S${recommend.section}`)),
           });
         }, 2000);
       })
@@ -157,6 +172,25 @@ class Body extends Component {
     });
   }
 
+  detectRecommend(e) {
+    if (this.state.recommend) return;
+
+    const windowRect = e.target.getBoundingClientRect();
+    for (let i = 0; i < this.state.recommendElems.length; i++) {
+      if (RECOMMEND[i].wasShown) continue;
+
+      const recommendElem = this.state.recommendElems[i];
+      const recommendRect = recommendElem.getBoundingClientRect();
+      if (recommendRect.top > windowRect.top && recommendRect.top < windowRect.top + 150) {
+        RECOMMEND[i].wasShown = true;
+        this.setState({
+          recommend: RECOMMEND[i],
+        });
+        break;
+      }
+    }
+  }
+
   render() {
     const noteComponent = [];
     this.state.sections.map((e, i) => {
@@ -180,7 +214,7 @@ class Body extends Component {
 
     return (
       <div style={styles.backgroundStyle}>
-        <div style={styles.leftStyle}>
+        <div style={styles.leftStyle} onScroll={this.detectRecommend}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
           <Recommend recommend={this.state.recommend}

@@ -103,15 +103,15 @@ class Body extends Component {
   }
 
 
-  addNote(section) {
+  addNote(section, title, content) {
     const { _id, _paperID } = this.state;
     this.setState(prevState => {
       let newNote = {
         uid: _id,
         paperId: _paperID,
         section: section,
-        title: '',
-        content: '',
+        title: title || '',
+        content: content || '',
       };
       let prevNotes = prevState.notes;
       let noteList = [];
@@ -160,7 +160,9 @@ class Body extends Component {
 
   addRecommendNote() {
     /* TODO: add a new note. */
-
+    const currentRec = this.state.recommend;
+    const { section, title, content } = currentRec;
+    this.addNote(section - 1, title, content);
     this.setState({
       recommend: null,
     });

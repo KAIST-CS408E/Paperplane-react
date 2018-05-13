@@ -76,7 +76,7 @@ class Note extends Component {
   popUpModalOnClick() {
     const addModalListener = (item) => {
       return (link) => {
-        link.addEventListener('click', () => this.props.showModal(item, 'note'));
+        link.addEventListener('click', () => this.props.showModal(item));
       };
     };
 

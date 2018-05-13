@@ -16,8 +16,7 @@ class Body extends Component {
       },
       sections: [],
       paper: null,
-      paperModalContent: null,
-      noteModalContent: null,
+      modalContent: null,
       _id: '',
       _paperID: '',
     };
@@ -50,7 +49,7 @@ class Body extends Component {
             return (link) => {
               link.removeAttribute('href');
               link.style.textDecoration = 'underline';
-              link.addEventListener('click', () => this.showModal(item, 'paper'));
+              link.addEventListener('click', () => this.showModal(item));
             };
           };
 
@@ -101,9 +100,9 @@ class Body extends Component {
     })
   }
 
-  showModal(content, type) {
+  showModal(content) {
     this.setState({
-      [`${type}ModalContent`]: {
+      modalContent: {
         __html: content.html,
       }
     });
@@ -124,8 +123,7 @@ class Body extends Component {
 
     const hideModal = () => {
       this.setState({
-        paperModalContent: null,
-        noteModalContent: null,
+        modalContent: null,
       });
     };
 
@@ -134,17 +132,12 @@ class Body extends Component {
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
-          <div className={`modal${this.state.paperModalContent ? ' is-active' : ''}`}
-               style={styles.paperModalStyle}
+          <div className={`modal${this.state.modalContent ? ' is-active' : ''}`}
+               style={styles.modalStyle}
                onClick={hideModal}>
             <div className="modal-background" style={styles.modalBackgroundStyle}></div>
-            <div className="modal-content" dangerouslySetInnerHTML={this.state.paperModalContent}
+            <div className="modal-content" dangerouslySetInnerHTML={this.state.modalContent}
                  style={styles.modalContentStyle}>
-            </div>
-          </div>
-          <div className={`modal${this.state.noteModalContent ? 'is-active' : ''}`} onClick={hideModal}>
-            <div className="modal-background"></div>
-            <div className="modal-content" dangerouslySetInnerHTML={this.state.noteModalContent}>
             </div>
           </div>
         </div>
@@ -181,7 +174,7 @@ const styles = {
     overflowY: 'scroll',
     padding: '0 30px',
   },
-  paperModalStyle: {
+  modalStyle: {
     top: '63px',
     width: 'calc(100vw - 400px)',
     height: 'calc(100vh - 63px)',

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
+import Recommend from './common/Recommend';
 import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 
@@ -19,10 +20,16 @@ class Body extends Component {
       modalContent: null,
       _id: '',
       _paperID: '',
+      recommend: {
+        title: 'test recommend',
+        content: 'I recommend you to implement something RIGHT NOW!',
+      },
     };
 
     this.showModal = this.showModal.bind(this);
     this.getNote = this.getNote.bind(this);
+    this.addRecommendNote = this.addRecommendNote.bind(this);
+    this.cancelRecommend = this.cancelRecommend.bind(this);
   }
 
   componentWillMount() {
@@ -136,6 +143,20 @@ class Body extends Component {
     });
   }
 
+  addRecommendNote() {
+    /* TODO: add a new note. */
+
+    this.setState({
+      recommend: null,
+    });
+  }
+
+  cancelRecommend() {
+    this.setState({
+      recommend: null,
+    });
+  }
+
   render() {
     const noteComponent = [];
     this.state.sections.map((e, i) => {
@@ -162,6 +183,8 @@ class Body extends Component {
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
+          <Recommend recommend={this.state.recommend}
+                     onOkListener={this.addRecommendNote} onCancelListener={this.cancelRecommend}/>
           <div className={`modal${this.state.modalContent ? ' is-active' : ''}`}
                style={styles.modalStyle}
                onClick={hideModal}>

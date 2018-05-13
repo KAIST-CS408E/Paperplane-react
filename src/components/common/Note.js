@@ -64,8 +64,8 @@ class Note extends Component {
   }
 
   contentEmbededHTML() {
-    const figureRegex = /(?!<a class="embed-F\d+">)fig(?:ure)?\s*(\d+)(?!<\/a>)/gi;
-    const equationRegex = /(?!<a class="embed-E\d+">)eq(?:uation)?\s*(\d+)(?!<\/a>)/gi;
+    const figureRegex = /(?!<a class="embed-F\d+">)fig\.?(?:ure)?\s*(\d+)(?!<\/a>)/gi;
+    const equationRegex = /(?!<a class="embed-E\d+">)eq\.?(?:uation)?\s*(\d+)(?!<\/a>)/gi;
 
     return this.state.html
       .replace(figureRegex, (match, number) => `<a class="embed-F${number}" style="text-decoration: underline;">${match}</a>`)

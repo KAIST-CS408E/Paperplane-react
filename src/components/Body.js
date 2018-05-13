@@ -23,6 +23,7 @@ class Body extends Component {
     };
 
     this.showModal = this.showModal.bind(this);
+    this.getNote = this.getNote.bind(this);
   }
 
   componentWillMount() {
@@ -69,6 +70,7 @@ class Body extends Component {
   getNote() {
     const { _id, _paperID } = this.state;
     const url = `${NOTE_URL}/?uid=${_id}&paperId=${_paperID}`;
+    console.log(url);
     axios.get(url)
       .then((res) => {
         const notes = res.data;
@@ -114,11 +116,9 @@ class Body extends Component {
       );
       if (this.state.notes.hasOwnProperty(i)) {
         this.state.notes[i].map((e) => {
-          console.log(e)
-          noteComponent.push(<Note noteId={e._id} title={e.title} content={e.content} paper={this.state.paper} showModal={this.showModal}/>);
+          noteComponent.push(<Note noteId={e._id} title={e.title} content={e.content} paper={this.state.paper} showModal={this.showModal} getNote={this.getNote}/>);
         })
       }
-      noteComponent.push(<Note noteId={'d'} title={'hi'} content={'c'} paper={this.state.paper} showModal={this.showModal}/>);
     });
 
     const hideModal = () => {

@@ -19,6 +19,7 @@ class Note extends Component {
     };
     this.saveNote = debounce(this.saveNote, 1000);
     this.popUpModalOnClick = debounce(this.popUpModalOnClick, 500);
+    this.deleteNote = this.deleteNote.bind(this);
   }
 
   componentWillMount() {
@@ -51,13 +52,14 @@ class Note extends Component {
       .catch((e) => console.log(e));
   }
 
-  deleteNote() {
+  deleteNote(e) {
     const url = `${NOTE_URL}/${this.state.noteId}`;
     axios.delete(url)
       .then((res) => {
-        console.log(res);
+        this.props.getNote();
       })
-      .catch((e) => console.log(e));
+      .catch((err) => console.log(err));
+    e.stopPropagation();
 
   }
 
@@ -108,7 +110,7 @@ class Note extends Component {
             <div>
               {this.state.title} <img style={styles.iconStyle} src={editIconPath} onClick={(e) => this.changeTitleMode(e)} />
             </div>
-            <img style={styles.iconStyle} src={deleteIconPath} onClick={this.deleteNote} />
+            <img style={styles.iconStyle} src={deleteIconPath} onClick={(e) => this.deleteNote(e)} />
           </div>
         ) :
         (

@@ -51,7 +51,7 @@ class Login extends Component {
               onChange={event => this.setState({ id: event.target.value })} />
           <input
               style={styles.titleTextArea}
-              type="text" value={this.state.password}
+              type="password" value={this.state.password}
               placeholder={'Password'}
               onChange={event => this.setState({ password: event.target.value })} />
           <div style={styles.buttonStyle} onClick={this.loginUser}>

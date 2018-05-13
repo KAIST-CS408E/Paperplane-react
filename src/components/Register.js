@@ -48,7 +48,7 @@ class Register extends Component {
                 onChange={event => this.setState({ nickname: event.target.value })} />
             <input
                 style={styles.titleTextArea}
-                type="text" value={this.state.password}
+                type="password" value={this.state.password}
                 placeholder={'Password'}
                 onChange={event => this.setState({ password: event.target.value })} />
             <div style={styles.buttonStyle} onClick={this.registerUser}>

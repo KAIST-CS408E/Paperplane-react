@@ -3,6 +3,7 @@ import Collapsible from 'react-collapsible';
 import './Note.css';
 import editIconPath from '../../icons/edit_icon.png';
 import TextArea from './TextArea';
+import { debounce } from '../../utils';
 
 class Note extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Note extends Component {
       content: <a>hi</a>,
       html: '',
     };
+    this.saveNote = debounce(this.saveNote, 1000);
   }
 
   changeTitleMode(e) {
@@ -31,10 +33,15 @@ class Note extends Component {
     return {html: "this is <em>an</em> <strong>example</strong>"};
   }
 
+  saveNote() {
+    console.log('debounced!');
+  }
+
 
   render() {
-    var handleChange = function(event){
+    let handleChange = function(event){
       this.setState({html: event.target.value});
+      this.saveNote();
     }.bind(this);
 
     const trigger = this.state.mode === 'read' ?

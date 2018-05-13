@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
-import { PAPER_URL } from '../constants';
+import {NOTE_URL, PAPER_URL} from '../constants';
 import { withCookies } from 'react-cookie';
 
 
@@ -17,6 +17,7 @@ class Body extends Component {
       paper: null,
       modalContent: null,
       _id: '',
+      _paperID: '',
     };
   }
 
@@ -37,6 +38,7 @@ class Body extends Component {
           paperContent: {
             __html: paper.content,
           },
+          _paperID: paper._id,
         });
 
         /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
@@ -68,9 +70,19 @@ class Body extends Component {
       .catch();
   }
 
+
   addNote(i) {
     this.setState(prevState => {
       let prevNote = prevState.notes;
+      // axios.post(NOTE_URL, {id, password})
+      //   .then((res) => {
+      //     const {uid, nickname, _id} = res.data;
+      //     cookies.set('id', uid, { path: '/' });
+      //     cookies.set('nickname', nickname, { path: '/' });
+      //     cookies.set('_id', _id, { path: '/' });
+      //     this.props.history.replace('/hi2');
+      //   })
+      //   .catch((e) => console.log(e));
       prevNote[i].notes.push(<Note/>);
       return {notes: prevNote};
     })

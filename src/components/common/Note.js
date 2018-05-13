@@ -39,10 +39,6 @@ class Note extends Component {
     e.stopPropagation();
   }
 
-  getInitialState() {
-    return {content: "this is <em>an</em> <strong>example</strong>"};
-  }
-
   saveNote() {
     console.log('debounced!');
     const url = `${NOTE_URL}/${this.state.noteId}`;
@@ -117,13 +113,7 @@ class Note extends Component {
         ) :
         (
           <div onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
-            <TextArea
-              style={styles.titleTextArea}
-              minRows={1}
-              maxRows={1}
-              placeholder={'Write title!'}
-              onChange={event => this.setState({ title: event.target.value })}
-              value={this.state.title} />
+            <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
           </div>
         );
     return (

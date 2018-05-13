@@ -164,6 +164,7 @@ const styles = {
     justifyContent: 'space-between',
     marginRight: '5px',
     alignItems: 'center',
+    cursor: 'pointer'
   }
 };
 

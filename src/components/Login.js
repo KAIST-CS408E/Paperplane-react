@@ -5,6 +5,7 @@ import axios from 'axios';
 import {LOGIN_URL} from "../constants";
 import {Link} from 'react-router-dom';
 import { withCookies, Cookies } from 'react-cookie';
+import Plane from 'react-icons/lib/fa/paper-plane';
 
 
 class Login extends Component {
@@ -40,7 +41,8 @@ class Login extends Component {
       <div style={styles.backgroundStyle}>
         <div style={styles.loginStyle}>
           <div style={styles.titleStyle}>
-            Paperplane
+            <Plane/>
+            <div style={{marginLeft: '10px'}}>Paperplane</div>
           </div>
           <input
               style={styles.titleTextArea}
@@ -55,11 +57,12 @@ class Login extends Component {
           <div style={styles.buttonStyle} onClick={this.loginUser}>
             Login
           </div>
-          <Link to='/register'>
+
             <div style={{...styles.buttonStyle, backgroundColor: '#595970'}} >
-              Register
+              <Link to='/register' style={{color: '#FFFFFF'}}>
+                Register
+              </Link>
             </div>
-          </Link>
         </div>
       </div>
     );
@@ -86,7 +89,7 @@ const styles = {
     fontSize: '1.2rem',
     fontWeight: 400,
     lineHeight: '100%',
-    width: '10rem',
+    width: '50%',
     outline: 'none',
     backgroundColor: 'rgb(255,255,255,0)',
   },
@@ -96,26 +99,31 @@ const styles = {
     alignItems: 'center',
     backgroundColor: '#8B008B',
     borderRadius: '1.5rem',
-    height: '1.7rem',
+    height: '15%',
     fontWeight: 900,
     fontSize: '1.2rem',
     width: '10rem',
     marginTop: '5px',
+    cursor: 'pointer',
+    color: '#efefef',
   },
   loginStyle: {
-    height: '23vh',
+    height: '23%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '1.5rem',
     backgroundColor: 'rgb(255,255,255,0.5)',
-    width: '20vw',
+    width: '35%',
   },
   titleStyle: {
     fontSize: '1.2rem',
     fontWeight: 800,
-
+    width: '55%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
   }
 };
 

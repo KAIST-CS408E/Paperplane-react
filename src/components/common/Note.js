@@ -15,6 +15,7 @@ class Note extends Component {
       html: '',
     };
     this.saveNote = debounce(this.saveNote, 1000);
+    this.popUpModalOnClick = debounce(this.popUpModalOnClick, 500);
   }
 
   changeTitleMode(e) {
@@ -37,11 +38,45 @@ class Note extends Component {
     console.log('debounced!');
   }
 
+  contentEmbededHTML() {
+    const figureRegex = /(?!<a class="embed-F\d+">)fig(?:ure)?\s*(\d+)(?!<\/a>)/gi;
+    const equationRegex = /(?!<a class="embed-E\d+">)eq(?:uation)?\s*(\d+)(?!<\/a>)/gi;
+
+    return this.state.html
+      .replace(figureRegex, (match, number) => `<a class="embed-F${number}">${match}</a>`)
+      .replace(equationRegex, (match, number) => `<a class="embed-E${number}">${match}</a>`);
+  }
+
+  /* TODO: REALLY, REALLY BAD IDEA to use debounce here... */
+  popUpModalOnClick() {
+    const addModalListener = (item) => {
+      return (link) => {
+        link.addEventListener('click', () => this.props.showModal(item, 'note'));
+      };
+    };
+
+    this.props.paper.figures.forEach((figure) => {
+      const imageLinks = document.querySelectorAll(`a[class="embed-${figure.number}"]`);
+      imageLinks.forEach(addModalListener(figure));
+    });
+
+    this.props.paper.equations.forEach((equation) => {
+      const equationLinks = document.querySelectorAll(`a[class="embed-${equation.number}"]`);
+      equationLinks.forEach(addModalListener(equation));
+    });
+  };
 
   render() {
-    let handleChange = function(event){
-      this.setState({html: event.target.value});
+    const handleChange = function (event) {
+      const contentEmbededNote = event.target.value;
+      const regex = /<a class="embed-[FE]\d+">|<\/a>/gi
+      const pureTextNote = contentEmbededNote.replace(regex, match => '');
+      this.setState({
+        html: pureTextNote,
+      });
+
       this.saveNote();
+      this.popUpModalOnClick();
     }.bind(this);
 
     const trigger = this.state.mode === 'read' ?
@@ -66,7 +101,7 @@ class Note extends Component {
           {/*placeholder={'Write something meaningful to you!'}*/}
           {/*onChange={event => this.setState({ content: event.target.value })}*/}
           {/*value={this.state.content} />*/}
-        <TextArea html={this.state.html} onChange={handleChange} />
+        <TextArea html={this.contentEmbededHTML()} onChange={handleChange} />
       </Collapsible>
     );
   }

@@ -15,10 +15,13 @@ class Body extends Component {
         __html: '',
       },
       paper: null,
-      modalContent: null,
+      paperModalContent: null,
+      noteModalContent: null,
       _id: '',
       _paperID: '',
     };
+
+    this.showModal = this.showModal.bind(this);
   }
 
   componentWillMount() {
@@ -46,13 +49,7 @@ class Body extends Component {
           const addModalListener = (item) => {
             return (link) => {
               link.removeAttribute('href');
-              link.addEventListener('click', () => {
-                this.setState({
-                  modalContent: {
-                    __html: item.html,
-                  },
-                });
-              });
+              link.addEventListener('click', () => this.showModal(item, 'paper'));
             };
           };
 
@@ -88,6 +85,14 @@ class Body extends Component {
     })
   }
 
+  showModal(content, type) {
+    this.setState({
+      [`${type}ModalContent`]: {
+        __html: content.html,
+      }
+    });
+  }
+
   render() {
     const noteComponent = [];
     this.state.notes.map((e, i) => {
@@ -95,13 +100,14 @@ class Body extends Component {
           <Title title={e.title} index={i + 1} addNote={() => this.addNote(i)} />
       );
       e.notes.map((e) => {
-        noteComponent.push(<Note />);
+        noteComponent.push(<Note paper={this.state.paper} showModal={this.showModal}/>);
       })
     });
 
     const hideModal = () => {
       this.setState({
-        modalContent: null,
+        paperModalContent: null,
+        noteModalContent: null,
       });
     };
 
@@ -110,8 +116,12 @@ class Body extends Component {
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
-          <div style={{ ...styles.modalStyle, display: this.state.modalContent ? 'block' : 'none' }}
-               dangerouslySetInnerHTML={this.state.modalContent}
+          <div style={{ ...styles.paperModalStyle, display: this.state.paperModalContent ? 'block' : 'none' }}
+               dangerouslySetInnerHTML={this.state.paperModalContent}
+               onClick={hideModal}>
+          </div>
+          <div style={{ ...styles.noteModalStyle, display: this.state.noteModalContent ? 'block' : 'none' }}
+               dangerouslySetInnerHTML={this.state.noteModalContent}
                onClick={hideModal}>
           </div>
         </div>
@@ -168,7 +178,14 @@ const styles = {
     overflowY: 'scroll',
     padding: '0 30px',
   },
-  modalStyle: {
+  paperModalStyle: {
+    backgroundColor: 'gray',
+    position: 'fixed',
+    padding: '10vh 10vw',
+    width: '80vw',
+    height: '80vh',
+  },
+  noteModalStyle: {
     backgroundColor: 'gray',
     position: 'fixed',
     padding: '10vh 10vw',

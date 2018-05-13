@@ -24,7 +24,7 @@ class TextArea extends Component {
   }
 
   emitChange() {
-    var html = ReactDOM.findDOMNode(this).innerHTML;
+    let html = ReactDOM.findDOMNode(this).innerHTML;
     if (this.props.onChange && html !== this.lastHtml) {
       this.props.onChange({
         target: {

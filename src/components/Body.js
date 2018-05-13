@@ -16,10 +16,13 @@ class Body extends Component {
       },
       sections: [],
       paper: null,
-      modalContent: null,
+      paperModalContent: null,
+      noteModalContent: null,
       _id: '',
       _paperID: '',
     };
+
+    this.showModal = this.showModal.bind(this);
   }
 
   componentWillMount() {
@@ -45,13 +48,7 @@ class Body extends Component {
           const addModalListener = (item) => {
             return (link) => {
               link.removeAttribute('href');
-              link.addEventListener('click', () => {
-                this.setState({
-                  modalContent: {
-                    __html: item.html,
-                  },
-                });
-              });
+              link.addEventListener('click', () => this.showModal(item, 'paper'));
             };
           };
 
@@ -75,6 +72,7 @@ class Body extends Component {
     axios.get(url)
       .then((res) => {
         const notes = res.data;
+        console.log(res);
         this.setState({notes});
       })
       .catch((e) => console.log(e));
@@ -93,10 +91,19 @@ class Body extends Component {
       };
       axios.post(NOTE_URL, data)
         .then((res) => {
+          console.log(res);
           this.getNote();
         })
         .catch((e) => console.log(e));
     })
+  }
+
+  showModal(content, type) {
+    this.setState({
+      [`${type}ModalContent`]: {
+        __html: content.html,
+      }
+    });
   }
 
   render() {
@@ -107,14 +114,17 @@ class Body extends Component {
       );
       if (this.state.notes.hasOwnProperty(i)) {
         this.state.notes[i].map((e) => {
-          noteComponent.push(<Note _id={e._id} title={e.title} content={e.content}/>);
+          console.log(e)
+          noteComponent.push(<Note noteId={e._id} title={e.title} content={e.content} paper={this.state.paper} showModal={this.showModal}/>);
         })
       }
+      noteComponent.push(<Note noteId={'d'} title={'hi'} content={'c'} paper={this.state.paper} showModal={this.showModal}/>);
     });
 
     const hideModal = () => {
       this.setState({
-        modalContent: null,
+        paperModalContent: null,
+        noteModalContent: null,
       });
     };
 
@@ -123,8 +133,12 @@ class Body extends Component {
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
-          <div style={{ ...styles.modalStyle, display: this.state.modalContent ? 'block' : 'none' }}
-               dangerouslySetInnerHTML={this.state.modalContent}
+          <div style={{ ...styles.paperModalStyle, display: this.state.paperModalContent ? 'block' : 'none' }}
+               dangerouslySetInnerHTML={this.state.paperModalContent}
+               onClick={hideModal}>
+          </div>
+          <div style={{ ...styles.noteModalStyle, display: this.state.noteModalContent ? 'block' : 'none' }}
+               dangerouslySetInnerHTML={this.state.noteModalContent}
                onClick={hideModal}>
           </div>
         </div>
@@ -162,7 +176,14 @@ const styles = {
     overflowY: 'scroll',
     padding: '0 30px',
   },
-  modalStyle: {
+  paperModalStyle: {
+    backgroundColor: 'gray',
+    position: 'fixed',
+    padding: '10vh 10vw',
+    width: '80vw',
+    height: '80vh',
+  },
+  noteModalStyle: {
     backgroundColor: 'gray',
     position: 'fixed',
     padding: '10vh 10vw',

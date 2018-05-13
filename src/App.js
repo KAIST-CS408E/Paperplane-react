@@ -31,7 +31,7 @@ class App extends Component {
       <CookiesProvider>
         <div className="App">
           { isLogin ? null: <NavBar /> }
-          <div style={isLogin? null : { paddingTop: 57 }}>
+          <div style={isLogin? null : { paddingTop: 63 }}>
           <Switch>
             <Route exact path="/" component={Login} />
               <Route exact path="/register" component={Register} />

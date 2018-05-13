@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
-import {NOTE_URL, PAPER_URL} from '../constants';
+import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 
 
@@ -16,8 +16,7 @@ class Body extends Component {
       },
       sections: [],
       paper: null,
-      paperModalContent: null,
-      noteModalContent: null,
+      modalContent: null,
       _id: '',
       _paperID: '',
     };
@@ -49,7 +48,8 @@ class Body extends Component {
           const addModalListener = (item) => {
             return (link) => {
               link.removeAttribute('href');
-              link.addEventListener('click', () => this.showModal(item, 'paper'));
+              link.style.textDecoration = 'underline';
+              link.addEventListener('click', () => this.showModal(item));
             };
           };
 
@@ -128,9 +128,9 @@ class Body extends Component {
     });
   }
 
-  showModal(content, type) {
+  showModal(content) {
     this.setState({
-      [`${type}ModalContent`]: {
+      modalContent: {
         __html: content.html,
       }
     });
@@ -153,8 +153,7 @@ class Body extends Component {
 
     const hideModal = () => {
       this.setState({
-        paperModalContent: null,
-        noteModalContent: null,
+        modalContent: null,
       });
     };
 
@@ -163,13 +162,13 @@ class Body extends Component {
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
           </div>
-          <div style={{ ...styles.paperModalStyle, display: this.state.paperModalContent ? 'block' : 'none' }}
-               dangerouslySetInnerHTML={this.state.paperModalContent}
+          <div className={`modal${this.state.modalContent ? ' is-active' : ''}`}
+               style={styles.modalStyle}
                onClick={hideModal}>
-          </div>
-          <div style={{ ...styles.noteModalStyle, display: this.state.noteModalContent ? 'block' : 'none' }}
-               dangerouslySetInnerHTML={this.state.noteModalContent}
-               onClick={hideModal}>
+            <div className="modal-background" style={styles.modalBackgroundStyle}></div>
+            <div className="modal-content" dangerouslySetInnerHTML={this.state.modalContent}
+                 style={styles.modalContentStyle}>
+            </div>
           </div>
         </div>
         <div style={styles.rightStyle}>
@@ -183,7 +182,7 @@ class Body extends Component {
 const styles = {
   backgroundStyle: {
     display: 'flex',
-    height: 'calc(100vh - 57px)',
+    height: 'calc(100vh - 63px)',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -191,7 +190,6 @@ const styles = {
     display: 'flex',
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'blue',
   },
   rightStyle: {
     width: '400px',
@@ -206,12 +204,17 @@ const styles = {
     overflowY: 'scroll',
     padding: '0 30px',
   },
-  paperModalStyle: {
-    backgroundColor: 'gray',
-    position: 'fixed',
-    padding: '10vh 10vw',
-    width: '80vw',
-    height: '80vh',
+  modalStyle: {
+    top: '63px',
+    width: 'calc(100vw - 400px)',
+    height: 'calc(100vh - 63px)',
+  },
+  modalBackgroundStyle: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  modalContentStyle: {
+    backgroundColor: 'white',
+    padding: '20px',
   },
   noteModalStyle: {
     backgroundColor: 'gray',

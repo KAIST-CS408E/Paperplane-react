@@ -5,6 +5,7 @@ import Note from './common/Note';
 import Recommend from './common/Recommend';
 import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
+import ReactDOM from 'react-dom';
 
 
 const RECOMMEND = [
@@ -29,16 +30,41 @@ class Body extends Component {
       paper: null,
       modalContent: null,
       _id: '',
+      selected: false,
+      selection: null,
       _paperID: '',
       recommend: null,
       recommendElems: [],
+      paperLoaded: false,
     };
 
+    this.highlight = this.highlight.bind(this);
     this.showModal = this.showModal.bind(this);
     this.getNote = this.getNote.bind(this);
     this.addRecommendNote = this.addRecommendNote.bind(this);
     this.cancelRecommend = this.cancelRecommend.bind(this);
     this.detectRecommend = this.detectRecommend.bind(this);
+  }
+
+  componentDidUpdate() {
+    if(this.state.paperLoaded) {
+      const paperdiv = document.getElementById('paperDiv');
+      const anchor = document.createElement('DIV');
+      anchor.className = 'anchor';
+      paperdiv.insertBefore(anchor, paperdiv.childNodes[0]);
+      const selection = document.createElement('DIV');
+      selection.id = 'selectionBox';
+      selection.className="selector";
+      selection.style.position='absolute';
+      selection.style.top=84;
+      selection.style.left='50%';
+      paperdiv.insertBefore(selection, paperdiv.childNodes[0]);
+      ReactDOM.render(<button onClick={this.highlight}>highlight</button>, document.getElementById('selectionBox'));
+      this.setState({
+        paperLoaded: false,
+      });
+    }
+
   }
 
   componentWillMount() {
@@ -56,6 +82,7 @@ class Body extends Component {
             __html: paper.content,
           },
           _paperID: paper._id,
+          paperLoaded: true,
         });
 
         /* Add onClickListener to figures and equations. */
@@ -193,6 +220,129 @@ class Body extends Component {
     }
   }
 
+  highlight_helper(paragraph, start, end) {
+    let _start = start;
+    let _end = end;
+    let next;
+    let element = paragraph.childNodes[0];
+    while(element !== null && element !== undefined && _start >= 0 && _end > 0) {
+      next = element.nextSibling;
+      const textLength = element.textContent.length;
+      if(textLength < _start) {
+        _start = _start - textLength;
+        _end = _end - textLength;
+      } else {
+        if(element.nodeType === Node.TEXT_NODE) {
+          const local_end = Math.min(element.textContent.length, _end);
+          const new_node = document.createTextNode(element.textContent.substr(0, _start));
+          const mid = document.createElement("SPAN");
+          mid.className = 'highlighted';
+          mid.appendChild(document.createTextNode(element.textContent.substr(_start, local_end - _start)));
+          paragraph.replaceChild(new_node, element);
+          paragraph.insertBefore(mid, new_node.nextSibling);
+          const end_node = document.createTextNode(element.textContent.substr(local_end, element.textContent.length - local_end));
+          paragraph.insertBefore(end_node, new_node.nextSibling.nextSibling);
+
+        } else {
+          this.highlight_helper(element, _start, _end);
+        }
+        _start = 0;
+        _end = _end - textLength;
+      }
+      element = next;
+    }
+  }
+
+  highlight() {
+    let paragraph;
+    console.log(this.state.selection);
+    const name = this.state.selection.paragraph;
+    if(name !== null && name !== undefined) {
+      if (name === 'ltx_abstract') {
+        paragraph = document.getElementsByClassName(name)[0];
+        console.log(paragraph);
+      } else {
+        paragraph = document.getElementById(name);
+      }
+      paragraph = paragraph.getElementsByTagName('P')[0];
+
+      this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
+    }
+    window.getSelection().empty();
+  }
+
+  getAnchorPosition(selection) {
+    let curr = selection.anchorNode;
+    let len = selection.anchorOffset;
+    while(true) {
+      while(curr.previousSibling !== null) {
+        curr = curr.previousSibling;
+        len += curr.textContent.length;
+      }
+      curr = curr.parentNode;
+      if(curr.tagName === 'P' || curr.tagName === 'p' || curr === null) {
+        break;
+      }
+    }
+    return len;
+  }
+
+  getFocusPosition(selection) {
+    let curr = selection.focusNode;
+    let len = selection.focusOffset;
+    while(true) {
+      while(curr.previousSibling !== null) {
+        curr = curr.previousSibling;
+        len += curr.textContent.length;
+      }
+      curr = curr.parentNode;
+      if(curr.tagName === 'P' || curr.tagName === 'p' || curr === null) {
+        break;
+      }
+    }
+    return len;
+  }
+
+  componentDidMount() {
+    const isNav4 = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) === 4);
+    const isNav4Min = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) >= 4);
+    const isIE4Min = (navigator.appName.indexOf("Microsoft") !== -1 && parseInt(navigator.appVersion) >= 4);
+
+    document.addEventListener('mouseup', (event) => {
+      if (isNav4Min) {
+        const selection = document.getSelection();
+        if (selection.anchorNode.parentNode.closest('p') !== null && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+          const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
+          const name = paragraph.id || paragraph.className;
+          document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height +'px';
+          const anchor = this.getAnchorPosition(selection);
+          const focus = this.getFocusPosition(selection);
+          const start = Math.min(anchor, focus);
+          const end = Math.max(anchor, focus);
+          this.setState({
+            selected: true,
+            selection: {
+              paragraph: name,
+              start: start,
+              end: end,
+            },
+          });
+          console.log(this.state.selected);
+        } else {
+          this.setState({
+            selected: false,
+          });
+        }
+      } else if (isIE4Min) {
+        if (document.selection) {
+
+          event.cancelBubble = true;
+        }
+      }
+      event.stopPropagation();
+    });
+  }
+
   getNoteComponent() {
     let noteComponent = [];
     let ex = [];
@@ -222,6 +372,12 @@ class Body extends Component {
   render() {
     const noteComponent = this.getNoteComponent();
 
+    const selectionBox = document.getElementById('selectionBox');
+    if(selectionBox) {
+      selectionBox.display = this.state.selected ? 'inline-block' : 'none';
+    }
+
+
     const hideModal = () => {
       this.setState({
         modalContent: null,
@@ -231,7 +387,9 @@ class Body extends Component {
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle} onScroll={this.detectRecommend}>
-          <div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
+          <div style={styles.boxStyle}>
+            <div id="paperDiv" style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
+            </div>
           </div>
           <Recommend recommend={this.state.recommend}
                      onOkListener={this.addRecommendNote} onCancelListener={this.cancelRecommend}/>
@@ -276,6 +434,7 @@ const styles = {
     margin: 'auto',
     overflowY: 'scroll',
     padding: '0 30px',
+    position: 'relative',
   },
   modalStyle: {
     top: '63px',
@@ -297,6 +456,9 @@ const styles = {
     width: '80vw',
     height: '80vh',
   },
+  boxStyle: {
+    position: 'relative',
+  }
 };
 
 export default withCookies(Body);

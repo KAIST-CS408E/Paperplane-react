@@ -208,12 +208,8 @@ class Body extends Component {
       if (notes.hasOwnProperty(i)) {
         let sectionNotes = notes[i];
         for (let j = 0 ; j < sectionNotes.length ; j += 1){
-          console.log(`${i}_${j}`);
           let note = sectionNotes[j];
-          console.log(note);
           ex.push(note);
-          console.log(ex[ex.length - 1]);
-          console.log(note.title);
           noteComponent.push(<Note key={note._id} noteId={note._id} title={note.title} content={note.content} paper={paper} showModal={this.showModal} deleteNote={() => this.deleteNote(i, j)}/>);
         }
       }

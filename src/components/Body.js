@@ -3,6 +3,7 @@ import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
 import Recommend from './common/Recommend';
+import ContentModal from './common/ContentModal';
 import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 import ReactDOM from 'react-dom';
@@ -40,6 +41,7 @@ class Body extends Component {
 
     this.highlight = this.highlight.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
     this.getNote = this.getNote.bind(this);
     this.addRecommendNote = this.addRecommendNote.bind(this);
     this.cancelRecommend = this.cancelRecommend.bind(this);
@@ -184,6 +186,12 @@ class Body extends Component {
       }
     });
   }
+
+  hideModal() {
+    this.setState({
+      modalContent: null,
+    });
+  };
 
   addRecommendNote() {
     /* TODO: add a new note. */
@@ -378,12 +386,6 @@ class Body extends Component {
     }
 
 
-    const hideModal = () => {
-      this.setState({
-        modalContent: null,
-      });
-    };
-
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle} onScroll={this.detectRecommend}>
@@ -393,14 +395,7 @@ class Body extends Component {
           </div>
           <Recommend recommend={this.state.recommend}
                      onOkListener={this.addRecommendNote} onCancelListener={this.cancelRecommend}/>
-          <div className={`modal${this.state.modalContent ? ' is-active' : ''}`}
-               style={styles.modalStyle}
-               onClick={hideModal}>
-            <div className="modal-background" style={styles.modalBackgroundStyle}></div>
-            <div className="modal-content" dangerouslySetInnerHTML={this.state.modalContent}
-                 style={styles.modalContentStyle}>
-            </div>
-          </div>
+          <ContentModal content={this.state.modalContent} hideModal={this.hideModal}/>
         </div>
         <div style={styles.rightStyle}>
           {noteComponent}
@@ -458,7 +453,7 @@ const styles = {
   },
   boxStyle: {
     position: 'relative',
-  }
+  },
 };
 
 export default withCookies(Body);

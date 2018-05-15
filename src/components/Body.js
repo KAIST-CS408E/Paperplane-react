@@ -343,20 +343,34 @@ class Body extends Component {
     });
   }
 
-  render() {
-    const noteComponent = [];
-    this.state.sections.map((e, i) => {
+  getNoteComponent() {
+    let noteComponent = [];
+    let ex = [];
+
+    let { sections, notes, paper } = this.state;
+    for (let i = 0; i < sections.length ; i += 1) {
+      let section = sections[i];
+      ex.push(section);
       noteComponent.push(
-          <Title title={e.name} index={i + 1} addNote={() => this.addNote(i)} />
+          <Title key={i + 100002} title={section.name} index={i + 1} addNote={() => this.addNote(i)} />
       );
-      if (this.state.notes.hasOwnProperty(i)) {
-        this.state.notes[i].map((e1, i1) => {
-          console.log(i)
-          console.log(e1)
-          noteComponent.push(<Note noteId={e1._id} title={e1.title} content={e1.content} paper={this.state.paper} showModal={this.showModal} deleteNote={() => this.deleteNote(i, i1)}/>);
-        })
+
+      if (notes.hasOwnProperty(i)) {
+        let sectionNotes = notes[i];
+        for (let j = 0 ; j < sectionNotes.length ; j += 1){
+          let note = sectionNotes[j];
+          ex.push(note);
+          noteComponent.push(<Note key={note._id} noteId={note._id} title={note.title} content={note.content} paper={paper} showModal={this.showModal} deleteNote={() => this.deleteNote(i, j)}/>);
+        }
       }
-    });
+    }
+    return noteComponent;
+
+
+  }
+
+  render() {
+    const noteComponent = this.getNoteComponent();
 
     const selectionBox = document.getElementById('selectionBox');
     if(selectionBox) {

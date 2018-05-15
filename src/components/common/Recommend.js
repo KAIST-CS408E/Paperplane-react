@@ -27,12 +27,14 @@ class Recommend extends Component {
 const styles = {
   modalBackgroundStyle: {
     width: 'calc(100vw - 400px)',
+    height: '150px',
+    top: '80%'
   },
   modalStyle: {
     '-webkit-box-shadow': '2px 2px 2px 2px #bbb',
     '-moz-box-shadow': '2px 2px 2px 2px #bbb',
     'box-shadow': '2px 2px 2px 2px #bbb',
-    marginTop: 'calc(100vh - 63px - 200px)',
+    // marginTop: 'calc(100vh - 63px - 200px)',
   },
   modalHeaderStyle: {
     padding: '15px',

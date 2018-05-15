@@ -281,6 +281,7 @@ const styles = {
     top: '63px',
     width: 'calc(100vw - 400px)',
     height: 'calc(100vh - 63px)',
+    overflow: 'hidden',
   },
   modalBackgroundStyle: {
     backgroundColor: 'rgba(0, 0, 0, 0.3)',

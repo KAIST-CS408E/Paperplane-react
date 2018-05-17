@@ -4,6 +4,7 @@ import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Body from './components/Body';
 import Login from './components/Login';
 import Register from './components/Register';
+import Profile from './components/Profile';
 import { CookiesProvider } from 'react-cookie';
 
 class App extends Component {
@@ -34,10 +35,11 @@ class App extends Component {
           <div style={isLogin? null : { paddingTop: 63 }}>
           <Switch>
             <Route exact path="/" component={Login} />
-              <Route exact path="/register" component={Register} />
-              <Route exact path="/main" component={Body} />
-              <Route exact path="/hi2" component={Body} />
-              <Redirect from="/" to="/" />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/main" component={Body} />
+            <Route exact path="/hi2" component={Body} />
+            <Route exact path="/profile/:uid" component={Profile} />
+            <Redirect from="/" to="/" />
           </Switch>
           </div>
         </div>

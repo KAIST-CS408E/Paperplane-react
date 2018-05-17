@@ -5,6 +5,7 @@ import Body from './components/Body';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
+import Summary from './components/Summary';
 import { CookiesProvider } from 'react-cookie';
 
 class App extends Component {
@@ -39,6 +40,7 @@ class App extends Component {
             <Route exact path="/main" component={Body} />
             <Route exact path="/hi2" component={Body} />
             <Route exact path="/profile/:uid" component={Profile} />
+            <Route exact path="/summary/:uid/:paperId" component={Summary} />
             <Redirect from="/" to="/" />
           </Switch>
           </div>

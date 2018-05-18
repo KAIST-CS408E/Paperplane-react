@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withCookies } from 'react-cookie';
 import axios from 'axios';
 import { BASE_URL } from '../constants';
 import SummarySection from './common/SummarySection';
@@ -17,7 +18,9 @@ class Summary extends Component {
   }
 
   componentWillMount = () => {
-    const { uid, paperId } = this.props.match.params;
+    const { cookies } = this.props;
+    const uid = cookies.get('_id');
+    const { paperId } = this.props.match.params;
     this.setState({
       uid,
       paperId,
@@ -49,4 +52,4 @@ class Summary extends Component {
   }
 }
 
-export default Summary;
+export default withCookies(Summary);

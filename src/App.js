@@ -39,8 +39,8 @@ class App extends Component {
             <Route exact path="/register" component={Register} />
             <Route exact path="/main" component={Body} />
             <Route exact path="/hi2" component={Body} />
-            <Route exact path="/profile/:uid" component={Profile} />
-            <Route exact path="/summary/:uid/:paperId" component={Summary} />
+            <Route exact path="/profile" component={Profile} />
+            <Route exact path="/summary/:paperId" component={Summary} />
             <Redirect from="/" to="/" />
           </Switch>
           </div>

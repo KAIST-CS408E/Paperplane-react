@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { BASE_URL } from '../constants';
+import { Link } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
 
 
 class Profile extends Component {
@@ -14,9 +16,11 @@ class Profile extends Component {
   }
 
   componentWillMount = () => {
-    const uid = this.props.match.params.uid;
+    const { cookies } = this.props;
+    const uid = cookies.get('_id');
     this.setState({ uid });
-    axios.get(`${BASE_URL}/papers/read-by/${uid}`)
+
+    axios.get(`${BASE_URL}papers/read-by/${uid}`)
       .then((res) => {
         this.setState({ papers: res.data });
       })
@@ -28,10 +32,10 @@ class Profile extends Component {
   render() {
     return (
       <div>
-        {this.state.papers}
+        {this.state.papers.map(paper => <Link to={`/summary/${paper._id}`} key={paper._id}>{paper.title}</Link>)}
       </div>
     );
   }
 }
 
-export default Profile;
+export default withCookies(Profile);

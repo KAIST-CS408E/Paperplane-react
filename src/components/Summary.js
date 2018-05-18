@@ -12,6 +12,7 @@ class Summary extends Component {
       uid: '',
       paperId: '',
       notesBySection: {},
+      paper: null,
     };
   }
 
@@ -22,23 +23,27 @@ class Summary extends Component {
       paperId,
     });
 
-    axios.get(`${BASE_URL}/notes/?uid=${uid}&paperId=${paperId}`)
+    axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
       .then((res) => {
-        alert(res.data);
         this.setState({ notesBySection: res.data });
       })
-      .catch((err) => {
-        alert(err);
-      });
+      .catch(alert);
+
+    axios.get(`${BASE_URL}papers/${paperId}`)
+      .then((res) => {
+        this.setState({ paper: res.data });
+      })
+      .catch(alert)
   };
 
   render() {
+    const { paper, notesBySection } = this.state;
     return (
       <div>
-        {Object.keys(this.state.notesBySection).map((noteSection) => {
-          const notesInSection = this.state.notesBySection[noteSection];
-          return <SummarySection section={noteSection} notes={notesInSection} />
-        })}
+        {paper
+          ? paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)
+          : []
+        }
       </div>
     );
   }

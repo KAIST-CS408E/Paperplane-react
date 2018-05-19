@@ -5,11 +5,12 @@ class DraggableModal extends Component {
     super(props);
     this.state = {
       query: '',
+      active: true,
     };
   }
 
   componentDidMount() {
-    let contextmenu = document.getElementById('contextMenu');
+    let contextmenu = document.getElementById(this.props.id);
     let initX, initY, mousePressX, mousePressY;
 
     contextmenu.addEventListener('mousedown', function(event) {
@@ -59,20 +60,16 @@ class DraggableModal extends Component {
 
   render() {
     return (
-      <div id='contextMenu'
-           className={`modal${this.props.active ? ' is-active' : ''}`}
+      <div id={this.props.id}
+           className={`modal${this.state.active ? ' is-active' : ''}`}
            style={styles.modalBackgroundStyle}>
         <div style={styles.modalStyle} className="modal-card">
           <header className="modal-card-head">
             <p className="modal-card-title">Modal title</p>
-            <button className="delete" aria-label="close" />
+            <button className="delete" aria-label="close" onClick={() => this.setState({active: false})}/>
           </header>
           <section className="modal-card-body">
           </section>
-          <footer className="modal-card-foot">
-            <button className="button is-success">Save changes</button>
-            <button className="button">Cancel</button>
-          </footer>
         </div>
       </div>
     )
@@ -98,13 +95,15 @@ const styles = {
     position: 'fixed',
     top: '100px',
     left: '100px',
-    width: 'calc(100vw - 400px)',
-    height: '150px',
+    width: '40vw',
+    height: '25vh',
   },
   modalStyle: {
     '-webkit-box-shadow': '2px 2px 2px 2px #bbb',
     '-moz-box-shadow': '2px 2px 2px 2px #bbb',
     'box-shadow': '2px 2px 2px 2px #bbb',
+    width: '40vw',
+    height: '25vh',
   },
 };
 

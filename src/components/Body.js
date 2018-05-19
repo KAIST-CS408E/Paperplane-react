@@ -40,10 +40,12 @@ class Body extends Component {
       recommendElems: [],
       paperLoaded: false,
       activeModal: false,
+      memoModals: [],
     };
 
     this.highlight = this.highlight.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.appendModal = this.appendModal.bind(this);
     this.searchNotes = this.searchNotes.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.getNote = this.getNote.bind(this);
@@ -363,12 +365,26 @@ class Body extends Component {
     axios.get(url)
         .then((res) => {
           console.log(res);
-          this.setState({activeModal: true});
+          this.appendModal();
         })
         .catch(err => {
           console.log(err);
         })
 
+  }
+
+  appendModal() {
+    this.setState(prevState => {
+      let memoModals = prevState.memoModals;
+      memoModals.push(1);
+      return {memoModals};
+    })
+  }
+
+  getMemoModals() {
+    return (
+        this.state.memoModals.map((e, i) => <DraggableModal key={i * 300} id={`memoModal_${i * 300}`}/>)
+    )
   }
 
   getNoteComponent() {
@@ -392,12 +408,11 @@ class Body extends Component {
         }
       }
     }
-    console.log(ex);
     return noteComponent;
   }
-
   render() {
     const noteComponent = this.getNoteComponent();
+    const modalComponent = this.getMemoModals();
 
     const selectionBox = document.getElementById('selectionBox');
     if(selectionBox) {
@@ -406,7 +421,8 @@ class Body extends Component {
 
 
     return (
-      <div style={styles.backgroundStyle}>
+      <div id='body'
+           style={styles.backgroundStyle}>
         <div style={styles.leftStyle} onScroll={this.detectRecommend}>
           <div style={styles.boxStyle}>
             <div id="paperDiv" style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>
@@ -420,7 +436,7 @@ class Body extends Component {
           <SearchBox searchNotes={this.searchNotes} />
           {noteComponent}
         </div>
-        <DraggableModal active={this.state.activeModal}/>
+        {modalComponent}
       </div>
     );
   }

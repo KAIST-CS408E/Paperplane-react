@@ -6,9 +6,7 @@ class SummaryNote extends Component {
     return (
       <div style={styles.noteSummaryStyle}>
         <h4 className="title is-5" style={styles.noteTitleStyle}>{this.props.note.title}</h4>
-        <div>
-          {this.props.note.content}
-        </div>
+        <div dangerouslySetInnerHTML={{ __html: this.props.note.content }} />
       </div>
     );
   }

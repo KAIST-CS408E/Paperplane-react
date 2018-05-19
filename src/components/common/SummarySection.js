@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
+import SummaryNote from './SummaryNote';
 
 
-class Summary extends Component {
+class SummarySection extends Component {
   render() {
     const { section, notes } = this.props;
     return (
-      <div>
-        <h2>{section.name}</h2>
-        <div style={{ backgroundColor: '#cccccc', }}>
-          {notes
-            ? notes.map(note => <div style={{ display: 'inline-block', width: '50%', wordBreak: 'break-word' }}>{JSON.stringify(note)}</div>)
-            : 'no note for this section :('}
+      <div style={styles.sectionSummaryContainerStyle}>
+        <h3 className="title is-4">{`${section.number}. ${section.name}`}</h3>
+        <div>
+          {!notes
+            ? <span style={styles.noNoteWarningStyle}>No note for this section :(</span>
+            : notes.map(note => <SummaryNote note={note} key={note._id} />)}
         </div>
       </div>
     );
   }
 }
 
-export default Summary;
+const styles = {
+  sectionSummaryContainerStyle: {
+    marginBottom: '30px',
+  },
+  noNoteWarningStyle: {
+    marginLeft: '3%',
+  },
+};
+
+export default SummarySection;

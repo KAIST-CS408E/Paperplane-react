@@ -146,12 +146,12 @@ class Body extends Component {
       let noteList = [];
       let noteIndex = 0;
       if (prevNotes.hasOwnProperty(section)) {
-        let noteList = prevNotes[section];
-        let noteIndex = noteList.length;
-        noteList.splice(noteIndex, 0, newNote);
+        noteList = prevNotes[section];
+        noteIndex = noteList.length;
+        noteList.splice(noteIndex, 0, {...newNote, _id: section * 24000 + noteIndex});
       }
       else {
-        noteList.splice(noteIndex, 0, newNote);
+        noteList.splice(noteIndex, 0, {...newNote, _id: section * 24000 + noteIndex});
         prevNotes[section] = noteList;
       }
       axios.post(NOTE_URL, newNote)
@@ -316,6 +316,7 @@ class Body extends Component {
     const isNav4Min = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) >= 4);
     const isIE4Min = (navigator.appName.indexOf("Microsoft") !== -1 && parseInt(navigator.appVersion) >= 4);
 
+    /*
     document.addEventListener('mouseup', (event) => {
       if (isNav4Min) {
         const selection = document.getSelection();
@@ -349,6 +350,7 @@ class Body extends Component {
       }
       event.stopPropagation();
     });
+    */
   }
 
   getNoteComponent() {
@@ -372,9 +374,8 @@ class Body extends Component {
         }
       }
     }
+    console.log(ex);
     return noteComponent;
-
-
   }
 
   render() {

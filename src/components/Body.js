@@ -7,7 +7,7 @@ import DraggableModal from './common/DraggableModal';
 import SearchBox from './common/SearchBox';
 import ContentModal from './common/ContentModal';
 import SectionSummaryForm from './common/SectionSummaryForm';
-import { NOTE_URL, PAPER_URL } from '../constants';
+import { BASE_URL, NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 import ReactDOM from 'react-dom';
 
@@ -42,6 +42,8 @@ class Body extends Component {
       paperLoaded: false,
       activeModal: false,
       memoModals: [],
+      summaries: null,
+      summariesLoaded: false,
     };
 
     this.highlight = this.highlight.bind(this);
@@ -55,12 +57,13 @@ class Body extends Component {
     this.detectRecommend = this.detectRecommend.bind(this);
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { cookies } = this.props;
     const _id = cookies.get('_id');
     this.setState({_id});
 
-    axios.get(PAPER_URL)
+    /* Fetch the paper from the server and save to state. */
+    await axios.get(PAPER_URL)
       .then((res) => {
         const paper = res.data[0];
         this.setState({
@@ -74,6 +77,42 @@ class Body extends Component {
         });
       })
       .catch();
+
+    /* Fetch summaries from the server and save to state. */
+    await axios.get(`${BASE_URL}summaries?uid=${this.state._id}&paperId=${this.state.paper._id}`)
+      .then((res) => {
+        const summaries = res.data;
+        this.setState({ summaries });
+      })
+      .catch(alert);
+
+    /* Create new summaries for sections without any summary currently. */
+    const summaryCreateReqs = [];
+    this.state.paper.sections.forEach(({ number: sectionNumber }) => {
+      if (!this.state.summaries[sectionNumber - 1]) {
+        summaryCreateReqs.push(
+          axios.post(`${BASE_URL}summaries`, {
+            uid: this.state._id,
+            paperId: this.state.paper._id,
+            section: sectionNumber - 1,
+            summary: '',
+          }).then((res) => {
+            this.setState((prevState) => {
+              return {
+                summaries: {
+                  ...prevState.summaries,
+                  [sectionNumber]: res.data
+                },
+              };
+            });
+          }).catch(alert)
+        );
+      }
+    });
+    await Promise.all(summaryCreateReqs);
+
+    /* Ready to render section summary form into the paper. */
+    this.setState({ summariesLoaded: true });
   }
 
   componentDidUpdate() {
@@ -90,9 +129,6 @@ class Body extends Component {
       selection.style.left='50%';
       paperdiv.insertBefore(selection, paperdiv.childNodes[0]);
       ReactDOM.render(<button onClick={this.highlight}>highlight</button>, document.getElementById('selectionBox'));
-      this.setState({
-        paperLoaded: false,
-      });
     };
 
     /* Add onClickListener to figures and equations. */
@@ -127,14 +163,23 @@ class Body extends Component {
         const summaryFormContainer = document.createElement('div');
         summaryFormContainer.id = `S${sectionNumber}-summary-form-container`;
         document.getElementById(`S${sectionNumber}`).appendChild(summaryFormContainer);
-        ReactDOM.render(<SectionSummaryForm />, summaryFormContainer);
+        ReactDOM.render(
+          <SectionSummaryForm paperId={this.state.paper._id} sectionNumber={sectionNumber}
+                              summary={this.state.summaries[sectionNumber - 1]} />,
+          summaryFormContainer
+        );
       });
     };
 
-    if(this.state.paperLoaded) {
+    if (this.state.paperLoaded) {
       prepareHighlight();
       prepareContentModal();
+      this.setState({ paperLoaded: false });
+    }
+
+    if (this.state.summariesLoaded) {
       prepareSectionSummary();
+      this.setState({ summariesLoaded: false });
     }
   }
 

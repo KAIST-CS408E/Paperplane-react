@@ -5,7 +5,7 @@ class ContentModal extends Component {
   render() {
     return (
       <div className={`modal${this.props.content ? ' is-active' : ''}`}
-           style={styles.modalStyle}
+           style={{ ...styles.modalStyle, width: this.props.isSummary ? '100vw' : 'calc(100vw - 400px)' }}
            onClick={this.props.hideModal}>
         <div className="modal-background" style={styles.modalBackgroundStyle} />
         <div className="modal-content" dangerouslySetInnerHTML={this.props.content}

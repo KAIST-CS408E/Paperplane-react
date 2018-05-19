@@ -3,6 +3,8 @@ import { withCookies } from 'react-cookie';
 import axios from 'axios';
 import { BASE_URL } from '../constants';
 import SummarySection from './common/SummarySection';
+import ContentModal from './common/ContentModal';
+import { popUpModalOnClick } from '../utils';
 
 
 class Summary extends Component {
@@ -16,6 +18,8 @@ class Summary extends Component {
       paperId: '',
       notesBySection: {},
       paper: null,
+      modalContent: null,
+      isPaperLoaded: false,
     };
   }
 
@@ -45,8 +49,23 @@ class Summary extends Component {
       .catch(alert)
   };
 
-  componentDidUpdate = () => {
-    /* TODO: add onClickListeners to show modals for images & figures. */
+  componentDidUpdate() {
+    if (!this.state.isPaperLoaded && this.state.paper) {
+      popUpModalOnClick(document, this.state.paper, this.showModal);
+      this.setState({ isPaperLoaded: true });
+    }
+  }
+
+  showModal = (content) => {
+    this.setState({
+      modalContent: {
+        __html: content.html
+      },
+    });
+  };
+
+  hideModal = () => {
+    this.setState({ modalContent: null });
   };
 
   render() {
@@ -60,6 +79,7 @@ class Summary extends Component {
             <p style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</p>
           </div>
           {paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)}
+          <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={true} />
         </div>
       );
   }

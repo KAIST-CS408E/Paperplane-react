@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { contentEmbededHTML } from '../../utils';
 
 
 class SummaryNote extends Component {
@@ -6,7 +7,7 @@ class SummaryNote extends Component {
     return (
       <div style={styles.noteSummaryStyle}>
         <h4 className="title is-4" style={styles.noteTitleStyle}>{this.props.note.title || 'No title'}</h4>
-        <div dangerouslySetInnerHTML={{ __html: this.props.note.content }} />
+        <div dangerouslySetInnerHTML={{ __html: contentEmbededHTML(this.props.note.content) }} />
       </div>
     );
   }

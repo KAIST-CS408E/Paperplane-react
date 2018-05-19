@@ -433,7 +433,7 @@ class Body extends Component {
           </div>
           <Recommend recommend={this.state.recommend}
                      onOkListener={this.addRecommendNote} onCancelListener={this.cancelRecommend}/>
-          <ContentModal content={this.state.modalContent} hideModal={this.hideModal}/>
+          <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={false}/>
         </div>
         <div style={styles.rightStyle}>
           <SearchBox searchNotes={this.searchNotes} />

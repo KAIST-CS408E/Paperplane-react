@@ -6,6 +6,7 @@ import Recommend from './common/Recommend';
 import DraggableModal from './common/DraggableModal';
 import SearchBox from './common/SearchBox';
 import ContentModal from './common/ContentModal';
+import SectionSummaryForm from './common/SectionSummaryForm';
 import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
 import ReactDOM from 'react-dom';
@@ -121,9 +122,19 @@ class Body extends Component {
       });
     };
 
+    const prepareSectionSummary = () => {
+      this.state.paper.sections.forEach(({ number: sectionNumber }) => {
+        const summaryFormContainer = document.createElement('div');
+        summaryFormContainer.id = `S${sectionNumber}-summary-form-container`;
+        document.getElementById(`S${sectionNumber}`).appendChild(summaryFormContainer);
+        ReactDOM.render(<SectionSummaryForm />, summaryFormContainer);
+      });
+    };
+
     if(this.state.paperLoaded) {
       prepareHighlight();
       prepareContentModal();
+      prepareSectionSummary();
     }
   }
 

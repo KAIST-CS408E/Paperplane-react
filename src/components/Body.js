@@ -54,27 +54,6 @@ class Body extends Component {
     this.detectRecommend = this.detectRecommend.bind(this);
   }
 
-  componentDidUpdate() {
-    if(this.state.paperLoaded) {
-      const paperdiv = document.getElementById('paperDiv');
-      const anchor = document.createElement('DIV');
-      anchor.className = 'anchor';
-      paperdiv.insertBefore(anchor, paperdiv.childNodes[0]);
-      const selection = document.createElement('DIV');
-      selection.id = 'selectionBox';
-      selection.className="selector";
-      selection.style.position='absolute';
-      selection.style.top=84;
-      selection.style.left='50%';
-      paperdiv.insertBefore(selection, paperdiv.childNodes[0]);
-      ReactDOM.render(<button onClick={this.highlight}>highlight</button>, document.getElementById('selectionBox'));
-      this.setState({
-        paperLoaded: false,
-      });
-    }
-
-  }
-
   componentWillMount() {
     const { cookies } = this.props;
     const _id = cookies.get('_id');
@@ -92,36 +71,60 @@ class Body extends Component {
           _paperID: paper._id,
           paperLoaded: true,
         });
-
-        /* Add onClickListener to figures and equations. */
-        /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
-        setTimeout(() => {
-          this.getNote();
-          const addModalListener = (item) => {
-            return (link) => {
-              link.removeAttribute('href');
-              link.style.textDecoration = 'underline';
-              link.addEventListener('click', () => this.showModal(item));
-            };
-          };
-
-          this.state.paper.figures.forEach((figure) => {
-            const imageLinks = document.querySelectorAll(`a[href$=".${figure.number}"]`);
-            imageLinks.forEach(addModalListener(figure));
-          });
-
-          this.state.paper.equations.forEach((equation) => {
-            const equationLinks = document.querySelectorAll(`a[href$=".${equation.number}"]`);
-            equationLinks.forEach(addModalListener(equation));
-          });
-
-          /* Save recommend elements. */
-          this.setState({
-            recommendElems: RECOMMEND.map(recommend => document.getElementById(`S${recommend.section}`)),
-          });
-        }, 2000);
       })
       .catch();
+  }
+
+  componentDidUpdate() {
+    const prepareHighlight = () => {
+      const paperdiv = document.getElementById('paperDiv');
+      const anchor = document.createElement('DIV');
+      anchor.className = 'anchor';
+      paperdiv.insertBefore(anchor, paperdiv.childNodes[0]);
+      const selection = document.createElement('DIV');
+      selection.id = 'selectionBox';
+      selection.className="selector";
+      selection.style.position='absolute';
+      selection.style.top=84;
+      selection.style.left='50%';
+      paperdiv.insertBefore(selection, paperdiv.childNodes[0]);
+      ReactDOM.render(<button onClick={this.highlight}>highlight</button>, document.getElementById('selectionBox'));
+      this.setState({
+        paperLoaded: false,
+      });
+    };
+
+    /* Add onClickListener to figures and equations. */
+    const prepareContentModal = () => {
+      this.getNote();
+      const addModalListener = (item) => {
+        return (link) => {
+          link.removeAttribute('href');
+          link.style.textDecoration = 'underline';
+          link.addEventListener('click', () => this.showModal(item));
+        };
+      };
+
+      this.state.paper.figures.forEach((figure) => {
+        const imageLinks = document.querySelectorAll(`a[href$=".${figure.number}"]`);
+        imageLinks.forEach(addModalListener(figure));
+      });
+
+      this.state.paper.equations.forEach((equation) => {
+        const equationLinks = document.querySelectorAll(`a[href$=".${equation.number}"]`);
+        equationLinks.forEach(addModalListener(equation));
+      });
+
+      /* Save recommend elements. */
+      this.setState({
+        recommendElems: RECOMMEND.map(recommend => document.getElementById(`S${recommend.section}`)),
+      });
+    };
+
+    if(this.state.paperLoaded) {
+      prepareHighlight();
+      prepareContentModal();
+    }
   }
 
   getNote() {

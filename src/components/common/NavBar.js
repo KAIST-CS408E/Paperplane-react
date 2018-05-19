@@ -11,7 +11,7 @@ export default class NavBar extends Component {
           <NavBarItem title to="/"><Plane/>&nbsp;PAPERPLANE</NavBarItem>
           <NavBarItem to="/hi2">Title3</NavBarItem>
           <NavBarItem to="/hi1">Title2</NavBarItem>
-          <NavBarItem to="/">Title1</NavBarItem>
+          <NavBarItem to="/profile">My Profile</NavBarItem>
           <div style={{ clear:'both' }} />
         </div>
       </div>

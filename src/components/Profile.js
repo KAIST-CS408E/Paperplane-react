@@ -12,13 +12,21 @@ class Profile extends Component {
     this.state = {
       uid: '',
       papers: [],
+      id: '',
+      nickname: '',
     };
   }
 
   componentWillMount = () => {
     const { cookies } = this.props;
     const uid = cookies.get('_id');
-    this.setState({ uid });
+    const id = cookies.get('id');
+    const nickname = cookies.get('nickname');
+    this.setState({
+      uid,
+      id,
+      nickname,
+    });
 
     axios.get(`${BASE_URL}papers/read-by/${uid}`)
       .then((res) => {
@@ -31,11 +39,28 @@ class Profile extends Component {
 
   render() {
     return (
-      <div>
-        {this.state.papers.map(paper => <Link to={`/summary/${paper._id}`} key={paper._id}>{paper.title}</Link>)}
+      <div style={styles.profileContainerStyle}>
+        <h2 className="title is-2">{`${this.state.nickname} (${this.state.id})`}</h2>
+        <p className="title is-3">Notes:</p>
+        <div className="content">
+          <ul style={styles.paperListStyle}>
+            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}`} key={paper._id}>{paper.title}</Link></li>)}
+          </ul>
+        </div>
       </div>
     );
   }
 }
+
+const styles = {
+  profileContainerStyle: {
+    width: '60vw',
+    margin: 'auto',
+    paddingTop: '20px',
+  },
+  paperListStyle: {
+    fontSize: '20px',
+  },
+};
 
 export default withCookies(Profile);

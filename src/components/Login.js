@@ -27,8 +27,8 @@ class Login extends Component {
 
     axios.post(LOGIN_URL, {id, password})
       .then((res) => {
-        const {uid, nickname, _id} = res.data;
-        cookies.set('id', uid, { path: '/' });
+        const {id, nickname, _id} = res.data;
+        cookies.set('id', id, { path: '/' });
         cookies.set('nickname', nickname, { path: '/' });
         cookies.set('_id', _id, { path: '/' });
         this.props.history.replace('/hi2');

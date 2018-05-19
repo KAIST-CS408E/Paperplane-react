@@ -11,6 +11,8 @@ class Summary extends Component {
 
     this.state = {
       uid: '',
+      id: '',
+      nickname: '',
       paperId: '',
       notesBySection: {},
       paper: null,
@@ -20,10 +22,14 @@ class Summary extends Component {
   componentWillMount = () => {
     const { cookies } = this.props;
     const uid = cookies.get('_id');
+    const id = cookies.get('id');
+    const nickname = cookies.get('nickname');
     const { paperId } = this.props.match.params;
     this.setState({
       uid,
       paperId,
+      id,
+      nickname,
     });
 
     axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
@@ -39,17 +45,41 @@ class Summary extends Component {
       .catch(alert)
   };
 
+  componentDidUpdate = () => {
+    /* TODO: add onClickListeners to show modals for images & figures. */
+  };
+
   render() {
     const { paper, notesBySection } = this.state;
-    return (
-      <div>
-        {paper
-          ? paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)
-          : []
-        }
-      </div>
-    );
+    return !paper
+      ? <div></div>
+      : (
+        <div style={styles.summaryContainerStyle}>
+          <h1 className="title is-2" style={styles.summaryHeaderStyle}>
+            {paper ? paper.title : ''}
+            <span style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</span>
+          </h1>
+          {paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)}
+        </div>
+      );
   }
 }
+
+const styles = {
+  summaryContainerStyle: {
+    width: '60vw',
+    margin: 'auto',
+    paddingTop: '60px',
+  },
+  summaryHeaderStyle: {
+    marginBottom: '60px',
+  },
+  authorStyle: {
+    float: 'right',
+    fontWeight: 'normal',
+    fontSize: '20px',
+    marginTop: '16px',
+  },
+};
 
 export default withCookies(Summary);

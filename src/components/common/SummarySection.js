@@ -7,7 +7,7 @@ class SummarySection extends Component {
     const { section, notes } = this.props;
     return (
       <div style={styles.sectionSummaryContainerStyle}>
-        <h3 className="title is-4">{`${section.number}. ${section.name}`}</h3>
+        <h3 className="title is-3">{`${section.number}. ${section.name}`}</h3>
         <div>
           {!notes
             ? <span style={styles.noNoteWarningStyle}>No note for this section :(</span>
@@ -20,7 +20,7 @@ class SummarySection extends Component {
 
 const styles = {
   sectionSummaryContainerStyle: {
-    marginBottom: '30px',
+    marginBottom: '60px',
   },
   noNoteWarningStyle: {
     marginLeft: '3%',

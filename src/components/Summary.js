@@ -55,10 +55,10 @@ class Summary extends Component {
       ? <div></div>
       : (
         <div style={styles.summaryContainerStyle}>
-          <h1 className="title is-2" style={styles.summaryHeaderStyle}>
-            {paper ? paper.title : ''}
-            <span style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</span>
-          </h1>
+          <div style={styles.summaryHeaderStyle}>
+            <h1 className="title is-2" style={styles.paperTitleStyle}>{paper ? paper.title : ''}</h1>
+            <p style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</p>
+          </div>
           {paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)}
         </div>
       );
@@ -72,10 +72,13 @@ const styles = {
     paddingTop: '60px',
   },
   summaryHeaderStyle: {
-    marginBottom: '60px',
+    marginBottom: '40px',
+  },
+  paperTitleStyle: {
+    textAlign: 'center',
   },
   authorStyle: {
-    float: 'right',
+    textAlign: 'right',
     fontWeight: 'normal',
     fontSize: '20px',
     marginTop: '16px',

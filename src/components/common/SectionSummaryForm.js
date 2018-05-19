@@ -9,12 +9,17 @@ class SectionSummaryForm extends Component {
 
     this.state = {
       isHidden: false,
+      isUpdating: false,
+      originalSummary: '',
       summary: '',
     };
   }
 
   componentWillMount() {
-    this.setState({ summary: this.props.summary })
+    this.setState({
+      summary: this.props.summary,
+      originalSummary: this.props.summary.summary,
+    })
   }
 
   hideForm = () => {
@@ -34,7 +39,19 @@ class SectionSummaryForm extends Component {
   };
 
   updateSummary = () => {
+    this.setState({ isUpdating: true });
     axios.put(`${BASE_URL}summaries/${this.state.summary._id}`, { summary: this.state.summary.summary })
+      .then(() => {
+        this.setState({
+          originalSummary: this.state.summary.summary,
+          isUpdating: false,
+        });
+      })
+      .catch(alert);
+  };
+
+  isSummaryUpdated = () => {
+    return this.state.summary.summary !== this.state.originalSummary;
   };
 
   render() {
@@ -46,7 +63,12 @@ class SectionSummaryForm extends Component {
                     onChange={this.updateLocalSummary} />
         </div>
         <div style={styles.buttonGroupStyle}>
-          <button className="button is-success" style={styles.buttonStyle} onClick={this.updateSummary}>Save!</button>
+          {/*<button className={`button is-primary${this.isSummaryUpdated() ? '' : ' is-static'}`}*/}
+          <button className={`button is-primary${this.state.isUpdating ? ' is-loading' : ''}`}
+                  disabled={!this.isSummaryUpdated()}
+                  style={styles.buttonStyle} onClick={this.updateSummary}>
+            {this.isSummaryUpdated() ? 'Save!' : 'Saved!'}
+          </button>
           <button className="button" style={styles.buttonStyle} onClick={this.hideForm}>Hide</button>
           <div style={{ clear: 'both' }} />
         </div>

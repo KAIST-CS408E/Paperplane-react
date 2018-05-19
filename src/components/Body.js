@@ -3,6 +3,8 @@ import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
 import Recommend from './common/Recommend';
+import DraggableModal from './common/DraggableModal';
+import SearchBox from './common/SearchBox';
 import ContentModal from './common/ContentModal';
 import { NOTE_URL, PAPER_URL } from '../constants';
 import { withCookies } from 'react-cookie';
@@ -37,10 +39,12 @@ class Body extends Component {
       recommend: null,
       recommendElems: [],
       paperLoaded: false,
+      activeModal: false,
     };
 
     this.highlight = this.highlight.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.searchNotes = this.searchNotes.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.getNote = this.getNote.bind(this);
     this.addRecommendNote = this.addRecommendNote.bind(this);
@@ -353,6 +357,20 @@ class Body extends Component {
     */
   }
 
+  searchNotes(query) {
+    const { _id, _paperID } = this.state;
+    const url = NOTE_URL + `?uid=${_id}&paperId=${_paperID}&query=${query}`;
+    axios.get(url)
+        .then((res) => {
+          console.log(res);
+          this.setState({activeModal: true});
+        })
+        .catch(err => {
+          console.log(err);
+        })
+
+  }
+
   getNoteComponent() {
     let noteComponent = [];
     let ex = [];
@@ -399,8 +417,10 @@ class Body extends Component {
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal}/>
         </div>
         <div style={styles.rightStyle}>
+          <SearchBox searchNotes={this.searchNotes} />
           {noteComponent}
         </div>
+        <DraggableModal active={this.state.activeModal}/>
       </div>
     );
   }

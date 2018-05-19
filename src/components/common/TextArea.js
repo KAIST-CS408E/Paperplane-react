@@ -47,6 +47,6 @@ const styles = {
     width: '90%',
     outline: 'none',
   },
-}
+};
 
 export default TextArea;

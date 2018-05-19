@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Note from './common/Note';
+import NoteReadOnly from './common/NoteReadOnly';
 import {NOTE_URL, PAPER_URL} from "../constants";
 
 class Search extends Component {
@@ -39,7 +39,7 @@ class Search extends Component {
       let sectionNotes = notes[i];
       for (let j = 0 ; j < sectionNotes.length ; j += 1){
         let note = sectionNotes[j];
-        noteComponent.push(<Note key={note._id} noteId={note._id} title={note.title} content={note.content}/>);
+        noteComponent.push(<NoteReadOnly key={note._id} noteId={note._id} title={note.title} content={note.content}/>);
       }
     }
     return noteComponent;

@@ -7,7 +7,7 @@ class ContentModal extends Component {
       <div className={`modal${this.props.content ? ' is-active' : ''}`}
            style={styles.modalStyle}
            onClick={this.props.hideModal}>
-        <div className="modal-background" style={styles.modalBackgroundStyle}></div>
+        <div className="modal-background" style={styles.modalBackgroundStyle} />
         <div className="modal-content" dangerouslySetInnerHTML={this.props.content}
              style={styles.modalContentStyle}>
         </div>

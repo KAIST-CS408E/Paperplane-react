@@ -18,6 +18,7 @@ class Summary extends Component {
       paperId: '',
       notesBySection: {},
       paper: null,
+      summaries: null,
       modalContent: null,
       isPaperLoaded: false,
     };
@@ -46,7 +47,13 @@ class Summary extends Component {
       .then((res) => {
         this.setState({ paper: res.data });
       })
-      .catch(alert)
+      .catch(alert);
+
+    axios.get(`${BASE_URL}summaries?uid=${uid}&paperId=${paperId}`)
+      .then((res) => {
+        this.setState({ summaries: res.data });
+      })
+      .catch(alert);
   };
 
   componentDidUpdate() {
@@ -69,8 +76,8 @@ class Summary extends Component {
   };
 
   render() {
-    const { paper, notesBySection } = this.state;
-    return !paper
+    const { paper, notesBySection, summaries } = this.state;
+    return !paper || !notesBySection || !summaries
       ? <div></div>
       : (
         <div style={styles.summaryContainerStyle}>
@@ -78,7 +85,11 @@ class Summary extends Component {
             <h1 className="title is-2" style={styles.paperTitleStyle}>{paper ? paper.title : ''}</h1>
             <p style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</p>
           </div>
-          {paper.sections.map(section => <SummarySection section={section} notes={notesBySection[section.number - 1]} />)}
+          {
+            paper.sections.map((section) => (
+              <SummarySection section={section} notes={notesBySection[section.number - 1]} summary={summaries[section.number - 1].summary} />
+            ))
+          }
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={true} />
         </div>
       );

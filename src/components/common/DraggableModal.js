@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import NoteContent from './NoteContent';
 
 class DraggableModal extends Component {
   constructor(props) {
@@ -35,40 +36,20 @@ class DraggableModal extends Component {
     }, false);
 
   }
-  // onMouseDown(e) {
-  //   let initX, initY, mousePressX, mousePressY;
-  //   console.log(e);
-  //
-  //   initX = this.offsetLeft;
-  //   initY = this.offsetTop;
-  //   mousePressX = e.clientX;
-  //   mousePressY = e.clientY;
-  //
-  //   function repositionElement(event) {
-  //     this.style.left = initX + event.clientX - mousePressX + 'px';
-  //     this.style.top = initY + event.clientY - mousePressY + 'px';
-  //   }
-  //
-  //   this.addEventListener('mousemove', repositionElement, false);
-  //
-  //   window.addEventListener('mouseup', function() {
-  //     this.removeEventListener('mousemove', repositionElement, false);
-  //   }, false);
-  //
-  //
-  // }
 
   render() {
+    const { title, content } = this.props;
     return (
       <div id={this.props.id}
            className={`modal${this.state.active ? ' is-active' : ''}`}
            style={styles.modalBackgroundStyle}>
         <div style={styles.modalStyle} className="modal-card">
           <header className="modal-card-head">
-            <p className="modal-card-title">Modal title</p>
+            <p className="modal-card-title">{title}</p>
             <button className="delete" aria-label="close" onClick={() => this.setState({active: false})}/>
           </header>
           <section className="modal-card-body">
+            <NoteContent html={content}/>
           </section>
         </div>
       </div>

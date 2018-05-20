@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import searchIconPath from '../../icons/search_icon.png';
+import backIconPath from '../../icons/back_icon.png';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -11,6 +12,10 @@ class SearchBox extends Component {
   render() {
     return (
       <div style={styles.contentStyle}>
+        <img style={styles.iconStyle} src={backIconPath} onClick={() => {
+          this.props.changeMode();
+          this.setState({query: ''});
+        }}/>
         <input style={styles.inputStyle} type='text' placeholder={'Check what others think!'} value={this.state.query} onChange={e => this.setState({query: e.target.value})} />
         <img style={styles.iconStyle} src={searchIconPath} onClick={() => this.props.searchNotes(this.state.query)}/>
       </div>

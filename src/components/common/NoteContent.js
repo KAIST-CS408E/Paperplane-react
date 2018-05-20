@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 
 class NoteContent extends Component {
   render() {
+    const content = this.props.html || 'Blank content!';
     return (
-      <div dangerouslySetInnerHTML={this.props.html}>
-      </div>
-    )
+        <div dangerouslySetInnerHTML={{__html: content}}>
+        </div>
+    );
   }
 }
 

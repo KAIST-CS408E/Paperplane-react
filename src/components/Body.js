@@ -3,6 +3,7 @@ import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
 import Recommend from './common/Recommend';
+import SearchResult from './SearchResult';
 import DraggableModal from './common/DraggableModal';
 import SearchBox from './common/SearchBox';
 import ContentModal from './common/ContentModal';
@@ -44,10 +45,13 @@ class Body extends Component {
       memoModals: [],
       summaries: null,
       summariesLoaded: false,
+      search: false,
+      searchNotes: [],
     };
 
     this.highlight = this.highlight.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.changeMode = this .changeMode.bind(this);
     this.appendModal = this.appendModal.bind(this);
     this.searchNotes = this.searchNotes.bind(this);
     this.hideModal = this.hideModal.bind(this);
@@ -421,10 +425,20 @@ class Body extends Component {
   searchNotes(query) {
     const { _id, _paperID } = this.state;
     const url = NOTE_URL + `?uid=${_id}&paperId=${_paperID}&query=${query}`;
+    let searchNotes = [];
     axios.get(url)
         .then((res) => {
           console.log(res);
-          this.appendModal();
+          const data = res.data;
+          const keys = Object.keys(data);
+          for (let i = 0; i < keys.length ; i += 1) {
+            const sectionNotes = data[keys[i]];
+            searchNotes = searchNotes.concat(sectionNotes);
+          }
+          this.setState({
+            searchNotes,
+            search: true
+          });
         })
         .catch(err => {
           console.log(err);
@@ -432,17 +446,25 @@ class Body extends Component {
 
   }
 
-  appendModal() {
+  changeMode() {
+    this.setState({
+      search: false,
+      searchNotes: [],
+    });
+  }
+
+  appendModal(note) {
     this.setState(prevState => {
       let memoModals = prevState.memoModals;
-      memoModals.push(1);
+      memoModals.push(note);
       return {memoModals};
     })
   }
 
   getMemoModals() {
+    console.log(this.state.memoModals);
     return (
-        this.state.memoModals.map((e, i) => <DraggableModal key={i * 300} id={`memoModal_${i * 300}`}/>)
+        this.state.memoModals.map((e, i) => <DraggableModal key={i * 300} id={`memoModal_${i * 300}`} title={e.title} content={e.content}/>)
     )
   }
 
@@ -478,7 +500,6 @@ class Body extends Component {
       selectionBox.display = this.state.selected ? 'inline-block' : 'none';
     }
 
-
     return (
       <div id='body'
            style={styles.backgroundStyle}>
@@ -492,8 +513,8 @@ class Body extends Component {
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={false}/>
         </div>
         <div style={styles.rightStyle}>
-          <SearchBox searchNotes={this.searchNotes} />
-          {noteComponent}
+          <SearchBox searchNotes={this.searchNotes}  changeMode={this.changeMode} />
+          {this.state.search ? <SearchResult notes={this.state.searchNotes} paper={this.state.paper} pinNote={this.appendModal}/> : noteComponent}
         </div>
         {modalComponent}
       </div>

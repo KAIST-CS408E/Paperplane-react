@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import Collapsible from 'react-collapsible';
 import './Note.css';
-import editIconPath from '../../icons/edit_icon.png';
-import deleteIconPath from '../../icons/delete_icon.png';
+import pinIconPath from '../../icons/pin_icon.png';
 import TextArea from './TextArea';
 import NoteContent from './NoteContent';
 import { debounce } from '../../utils';
@@ -26,7 +25,7 @@ class NoteReadOnly extends Component {
     this.setState({ noteId, title, content });
   }
 
-  contentEmbededHTML() {
+  contentEmbeddedHTML() {
     const figureRegex = /(?!<a class="embed-F\d+">)fig\.?(?:ure)?\s*(\d+)(?!<\/a>)/gi;
     const equationRegex = /(?!<a class="embed-E\d+">)eq\.?(?:uation)?\s*(\d+)(?!<\/a>)/gi;
 
@@ -55,39 +54,18 @@ class NoteReadOnly extends Component {
   };
 
   render() {
-    const handleChange = function (event) {
-      const contentEmbededNote = event.target.value;
-      const regex = /<a class="embed-[FE]\d+"((?!>)[\w\W])*>|<\/a>/gi
-      const pureTextNote = contentEmbededNote.replace(regex, match => '');
-      this.setState({
-        content: pureTextNote,
-      });
-
-      this.saveNote();
-      this.popUpModalOnClick();
-    }.bind(this);
-
-    const readMode = this.state.mode === 'read' || this.props.readonly;
-
-    const trigger = readMode ?
+    let { title, content } = this.state;
+    content = this.contentEmbeddedHTML();
+    const trigger =
         (
             <div style={styles.noteTitleStyle}>
-              <div> {this.state.title} </div>
-            </div>
-        ) :
-        (
-            <div onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
-              <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
+              <div> {title} </div>
+              <img src={pinIconPath} onClick={(e) => this.props.pinNote(e, { title, content })}/>
             </div>
         );
-
-    const content = readMode ?
-        <NoteContent html={this.contentEmbededHTML()}/>:
-        <TextArea html={this.contentEmbededHTML()} onChange={handleChange} />;
-
     return (
         <Collapsible trigger={trigger} transitionTime={100}>
-          {content}
+          <NoteContent html={content}/>
         </Collapsible>
     );
   }

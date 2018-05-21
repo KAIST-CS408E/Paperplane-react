@@ -1,15 +1,76 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
+import { PAPER_URL } from '../constants';
+import { withCookies } from 'react-cookie';
+import '../index.css';
 
 
 class Body extends Component {
+  highlight_helper(paragraph, start, end) {
+    let _start = start;
+    let _end = end;
+    let next;
+    let element = paragraph.childNodes[0];
+    while(element !== null && _start >= 0 && _end > 0) {
+      next = element.nextSibling;
+      const textLength = element.textContent.length;
+      if(textLength < _start) {
+        _start = _start - textLength;
+        _end = _end - textLength;
+      } else {
+        if(element.nodeType === Node.TEXT_NODE) {
+          const local_end = Math.min(element.textContent.length, _end);
+          const new_node = document.createTextNode(element.textContent.substr(0, _start));
+          const mid = document.createElement("SPAN");
+          mid.className = 'highlighted';
+          mid.appendChild(document.createTextNode(element.textContent.substr(_start, local_end - _start)));
+          paragraph.replaceChild(new_node, element);
+          paragraph.insertBefore(mid, new_node.nextSibling);
+          const end_node = document.createTextNode(element.textContent.substr(local_end, element.textContent.length - local_end));
+          paragraph.insertBefore(end_node, new_node.nextSibling.nextSibling);
+
+        } else {
+          this.highlight_helper(element, _start, _end);
+        }
+        _start = 0;
+        _end = _end - textLength;
+      }
+      element = next;
+    }
+  }
+
+  highlight() {
+    let paragraph;
+    console.log(this.state.selection);
+    const name = this.state.selection.paragraph;
+    if(name !== null && name !== undefined) {
+      if (name === 'ltx_abstract') {
+        paragraph = document.getElementsByClassName(name)[0];
+        console.log(paragraph);
+      } else {
+        paragraph = document.getElementById(name);
+      }
+      paragraph = paragraph.getElementsByTagName('P')[0];
+
+      this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
+    }
+    window.getSelection().empty();
+  }
+
   getAnchorPosition(selection) {
     let curr = selection.anchorNode;
     let len = selection.anchorOffset;
-    while(curr.previousSibling !== null) {
-      curr = curr.previousSibling;
-      len += curr.textContent.length;
+    while(true) {
+      while(curr.previousSibling !== null) {
+        curr = curr.previousSibling;
+        len += curr.textContent.length;
+      }
+      curr = curr.parentNode;
+      if(curr.tagName === 'P' || curr.tagName === 'p' || curr === null) {
+        break;
+      }
     }
     return len;
   }
@@ -17,9 +78,15 @@ class Body extends Component {
   getFocusPosition(selection) {
     let curr = selection.focusNode;
     let len = selection.focusOffset;
-    while(curr.previousSibling !== null) {
-      curr = curr.previousSibling;
-      len += curr.textContent.length;
+    while(true) {
+      while(curr.previousSibling !== null) {
+        curr = curr.previousSibling;
+        len += curr.textContent.length;
+      }
+      curr = curr.parentNode;
+      if(curr.tagName === 'P' || curr.tagName === 'p' || curr === null) {
+        break;
+      }
     }
     return len;
   }
@@ -29,39 +96,138 @@ class Body extends Component {
     const isNav4Min = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) >= 4);
     const isIE4Min = (navigator.appName.indexOf("Microsoft") !== -1 && parseInt(navigator.appVersion) >= 4);
 
-    document.addEventListener('mouseup', (event)=> {
+    document.addEventListener('mouseup', (event) => {
       if (isNav4Min) {
         const selection = document.getSelection();
-        if (selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p')) {
-          console.log(selection);
+        if (selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+          const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
+          const name = paragraph.id || paragraph.className;
+          document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height +'px';
           const anchor = this.getAnchorPosition(selection);
           const focus = this.getFocusPosition(selection);
           const start = Math.min(anchor, focus);
           const end = Math.max(anchor, focus);
-          console.log(selection.anchorNode.parentNode.closest('p').closest('div').id);
-          console.log(start, end);
+          this.setState({
+            selected: true,
+            selection: {
+              paragraph: name,
+              start: start,
+              end: end,
+            },
+          });
+        } else {
+          this.setState({
+            selected: false,
+          });
         }
       } else if (isIE4Min) {
         if (document.selection) {
-          console.log(document.selection.createRange().text);
+
           event.cancelBubble = true;
         }
       }
+      event.stopPropagation();
+    });
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      paperContent: {
+        __html: '',
+      },
+      paper: null,
+      modalContent: null,
+      _id: '',
+      selected: false,
+      selection: null,
+    };
+    this.highlight = this.highlight.bind(this);
+  }
+
+  componentWillMount() {
+    const { cookies } = this.props;
+    const _id = cookies.get('_id');
+    this.setState({_id});
+
+    data.map((e, i) => {
+      this.state.notes.push(e);
+    });
+
+    axios.get(PAPER_URL)
+      .then((res) => {
+        const paper = res.data[0];
+        this.setState({
+          paper,
+          paperContent: {
+            __html: paper.content,
+          },
+        });
+
+        /* TODO: REALLY, REALLY BAD IDEA to use setTimeout() here... */
+        setTimeout(() => {
+          const addModalListener = (item) => {
+            return (link) => {
+              link.removeAttribute('href');
+              link.addEventListener('click', () => {
+                this.setState({
+                  modalContent: {
+                    __html: item.html,
+                  },
+                });
+              });
+            };
+          };
+
+          this.state.paper.figures.forEach((figure) => {
+            const imageLinks = document.querySelectorAll(`a[href$=".${figure.number}"]`);
+            imageLinks.forEach(addModalListener(figure));
+          });
+
+          this.state.paper.equations.forEach((equation) => {
+            const equationLinks = document.querySelectorAll(`a[href$=".${equation.number}"]`);
+            equationLinks.forEach(addModalListener(equation));
+          });
+        }, 2000);
+      })
+      .catch();
+  }
+
+  addNote(i) {
+    this.setState(prevState => {
+      let prevNote = prevState.notes;
+      prevNote[i].notes.push(<Note/>);
+      return {notes: prevNote};
     });
   }
 
   render() {
-    const titleComponents = data.map((e, i) =>
-      <Title title={e.title} index={i+1} />
-    );
+    const noteComponent = [];
+    this.state.notes.map((e, i) => {
+      noteComponent.push(
+          <Title title={e.title} index={i + 1} addNote={() => this.addNote(i)} />
+      );
+      e.notes.map((e) => {
+        noteComponent.push(<Note />);
+      })
+    });
+
+    const hideModal = () => {
+      this.setState({
+        modalContent: null,
+      });
+    };
 
     return (
       <div style={styles.backgroundStyle}>
         <div style={styles.leftStyle}>
           <div style={styles.paperStyle}>
+            <div className="anchor" />
+            <button onClick={this.highlight} className="selector" style={{position: 'absolute', top: 84, left: '50%', display: this.state.selected? 'inline-block' : 'none'}}>highlight</button>
             <div className="ltx_abstract">
               <h2 className="">Abstract</h2>
-              <p className="ltx_p">Deep learning-based techniques have achieved state-of-the-art performance on a wide variety of recognition and classification tasks. However, these networks are typically computationally expensive to train, requiring weeks of computation on many GPUs; as a result, many users outsource the training procedure to the cloud or rely on pre-trained models that are then fine-tuned for a specific task. In this paper we show that outsourced training introduces new security risks: an adversary can create a maliciously trained network (a backdoored neural network, or a <span className="ltx_text ltx_emph ltx_font_italic">BadNet</span>) that has state-of-the-art performance on the user’s training and validation samples, but behaves badly on specific attacker-chosen inputs. We first explore the properties of BadNets in a toy example, by creating a backdoored handwritten digit classNameifier. Next, we demonstrate backdoors in a more realistic scenario by creating a U.S. street sign classNameifier that identifies stop signs as speed limits when a special sticker is added to the stop sign; we then show in addition that the backdoor in our US street sign detector can persist even if the network is later retrained for another task and cause a drop in accuracy of 25% on average when the backdoor trigger is present. These results demonstrate that backdoors in neural networks are both powerful and—because the behavior of neural networks is difficult to explicate—stealthy. This work provides motivation for further research into techniques for verifying and inspecting neural networks, just as we have developed tools for verifying and debugging software.</p>
+              <p className="ltx_p">De<span>e<a>p</a></span> learning-based techniques have achieved state-of-the-art performance on a wide variety of recognition and classification tasks. However, these networks are typically computationally expensive to train, requiring weeks of computation on many GPUs; as a result, many users outsource the training procedure to the cloud or rely on pre-trained models that are then fine-tuned for a specific task. In this paper we show that outsourced training introduces new security risks: an adversary can create a maliciously trained network (a backdoored neural network, or a <span className="ltx_text ltx_emph ltx_font_italic">BadNet</span>) that has state-of-the-art performance on the user’s training and validation samples, but behaves badly on specific attacker-chosen inputs. We first explore the properties of BadNets in a toy example, by creating a backdoored handwritten digit classNameifier. Next, we demonstrate backdoors in a more realistic scenario by creating a U.S. street sign classNameifier that identifies stop signs as speed limits when a special sticker is added to the stop sign; we then show in addition that the backdoor in our US street sign detector can persist even if the network is later retrained for another task and cause a drop in accuracy of 25% on average when the backdoor trigger is present. These results demonstrate that backdoors in neural networks are both powerful and—because the behavior of neural networks is difficult to explicate—stealthy. This work provides motivation for further research into techniques for verifying and inspecting neural networks, just as we have developed tools for verifying and debugging software.</p>
             </div>
             <section id="S1" className="ltx_section">
               <h2 className="ltx_title ltx_title_section">
@@ -82,17 +248,22 @@ class Body extends Component {
                 <span className="ltx_tag ltx_tag_section"><a href="#S3">3 </a></span><span className="ltx_text ltx_font_smallcaps">Related Work</span>
               </h2>
               <div className="ltx_para" id="S3.p1">
-                <p className="ltx_p">Attacks on machine learning were first considered in the context of statistical spam filters. Here the attacker’s goal was to either craft messages that evade detection&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-22"><a className="ltx_ref" href="#bib.bib25" onclick="event.preventDefault()" title="">25</a></span>, <span data-hover-ref="dt-cite-hover-box-23"><a className="ltx_ref" href="#bib.bib26" onclick="event.preventDefault()" title="">26</a></span>, <span data-hover-ref="dt-cite-hover-box-24"><a className="ltx_ref" href="#bib.bib27" onclick="event.preventDefault()" title="">27</a></span>, <span data-hover-ref="dt-cite-hover-box-25"><a className="ltx_ref" href="#bib.bib28" onclick="event.preventDefault()" title="">28</a></span>]</cite> to let spam through or influence its training data to cause it to block legitimate messages. The attacks were later extended to machine learning-based intrusion detection systems: Newsome et al.&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-26"><a className="ltx_ref" href="#bib.bib29" onclick="event.preventDefault()" title="">29</a></span>]</cite> devised training-time attacks against the Polygraph virus detection system that would create both false positives and negatives when classNameifying network traffic, and Chung and Mok&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-27"><a className="ltx_ref" href="#bib.bib30" onclick="event.preventDefault()" title="">30</a></span>, <span data-hover-ref="dt-cite-hover-box-28"><a className="ltx_ref" href="#bib.bib31" onclick="event.preventDefault()" title="">31</a></span>]</cite> found that Autograph, a signature detection system that updates its model online, was vulnerable to <span className="ltx_text ltx_emph ltx_font_italic">allergy attacks</span> that convince the system to learn signatures that match benign traffic. A taxonomy of classNameical machine learning attacks can be found in Huang, et al.’s&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-29"><a className="ltx_ref" href="#bib.bib24" onclick="event.preventDefault()" title="">24</a></span>]</cite> 2011 survey.</p>
+                <p className="ltx_p">Attacks on machine learning were first considered in the context of statistical spam filters. Here the attacker’s goal was to either craft messages that evade detection&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-22"><a className="ltx_ref" href="#bib.bib25" onclick="event.preventDefault()" title="">25</a></span>, <span data-hover-ref="dt-cite-hover-box-23"><a className="ltx_ref" href="#bib.bib26" onclick="event.preventDefault()" title="">26</a></span>, <span data-hover-ref="dt-cite-hover-box-24"><a className="ltx_ref" href="#bib.bib27" onclick="event.preventDefault()" title="">27</a></span>, <span data-hover-ref="dt-cite-hover-box-25"><a className="ltx_ref" href="#bib.bib28" onclick="event.preventDefault()" title="">28</a></span>]</cite> to let spam through or influence its training data to cause it to block legitimate messages. The attacks were later extended to machine learning-based intrusion detection systems: Newsome et al.&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-26"><a className="ltx_ref" href="#bib.bib29" onclick="event.preventDefault()" title="">29</a></span>]</cite> devised training-time attacks against the Polygraph virus detection system that would create both false positives and negatives when classNameifying network traffic, and Chung and Mok&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-27">wakanda<a className="ltx_ref" href="#bib.bib30" onclick="event.preventDefault()" title="">30</a></span>, <span data-hover-ref="dt-cite-hover-box-28"><a className="ltx_ref" href="#bib.bib31" onclick="event.preventDefault()" title="">31</a></span>]</cite> found that Autograph, a signature detection system that updates its model online, was vulnerable to <span className="ltx_text ltx_emph ltx_font_italic">allergy attacks</span> that convince the system to learn signatures that match benign traffic. A taxonomy of classNameical machine learning attacks can be found in Huang, et al.’s&nbsp;<cite className="ltx_cite ltx_citemacro_cite">[<span data-hover-ref="dt-cite-hover-box-29"><a className="ltx_ref" href="#bib.bib24" onclick="event.preventDefault()" title="">24</a></span>]</cite> 2011 survey.</p>
               </div>
               <div className="ltx_para" id="S3.p2">
                 <p className="ltx_p">To create our backdoors, we primarily use <span className="ltx_text ltx_emph ltx_font_italic">training set poisoning</span>, in which the attacker is able to add his own samples (and corresponding ground truth labels) to the training set. Existing research on training set poisoning typically assumes that the attacker is only able to influence some fixed proportion of the training data, or that the classNameifier is updated online with new inputs, some of which may be attacker-controlled, but not change the training algorithm itself. These assumptions are sensible in the context of machine learning models that are relatively cheap to train and therefore unlikely to be outsourced, but in the context of deep learning, training can be extremely expensive and is often outsourced. Thus, in our threat model (Section&nbsp;<a className="ltx_ref" href="#S2.SS2" title="2.2 Threat Model ‣ 2 Background and Threat Model ‣ BadNets: Identifying Vulnerabilities in the Machine Learning Model Supply Chain"><span className="ltx_text ltx_ref_tag">2.2</span></a>) we allow the attacker to freely modify the training procedure as long as the parameters returned to the user satisfy the model architecture and meet the user’s expectations of accuracy.</p>
               </div>
             </section>
+          {/*<div style={styles.paperStyle} dangerouslySetInnerHTML={this.state.paperContent}>*/}
+          {/*</div>*/}
+          {/*<div style={{ ...styles.modalStyle, display: this.state.modalContent ? 'block' : 'none' }}*/}
+               {/*dangerouslySetInnerHTML={this.state.modalContent}*/}
+               {/*onClick={hideModal}>*/}
           </div>
+
         </div>
         <div style={styles.rightStyle}>
-          {titleComponents}
-          <Note/>
+          {noteComponent}
         </div>
       </div>
     );
@@ -102,22 +273,26 @@ class Body extends Component {
 const data = [
   {
     title: 'Introduction',
+    notes: [],
   },
   {
     title: 'Deep Image Representation',
+    notes: [],
   },
   {
     title: 'Result',
+    notes: [{title: 'State of the art result', body: 'This is total insane!'}],
   },
   {
     title: 'Discussion',
+    notes: [],
   },
 ];
 
 const styles = {
   backgroundStyle: {
     display: 'flex',
-    height: '100vh',
+    height: 'calc(100vh - 57px)',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -129,15 +304,25 @@ const styles = {
   },
   rightStyle: {
     width: '400px',
-    backgroundColor: 'red',
+    backgroundColor: '#828282',
   },
   paperStyle: {
     flex: 1,
-    maxWidth: '1000px',
+    maxWidth: 'calc(100vw - 400px)',
     backgroundColor: 'white',
     height: '100%',
     margin: 'auto',
-  }
+    overflowY: 'scroll',
+    padding: '0 30px',
+    position: 'relative',
+  },
+  modalStyle: {
+    backgroundColor: 'gray',
+    position: 'fixed',
+    padding: '10vh 10vw',
+    width: '80vw',
+    height: '80vh',
+  },
 };
 
-export default Body;
+export default withCookies(Body);

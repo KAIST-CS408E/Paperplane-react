@@ -1,25 +1,24 @@
 .Collapsible__contentOuter {
-    background-color: azure;
     font-size: 1rem;
     width: 100%;
 }
 
 .Collapsible__contentInner {
-    background-color: azure;
     font-size: 1rem;
     width: 100%;
 }
 
 .Collapsible {
-    background-color: azure;
+    background-color: white;
     font-size: 1.5rem;
     width: 100%;
-    padding: 0px 10px;
 }
 
 .Collapsible__trigger {
     width: 100%;
-    height: 100%;
+    padding-top: 5px;
+    margin-bottom: 5px;
+    /* border-bottom: 1px solid #efefef;*/
 }
 
 span {

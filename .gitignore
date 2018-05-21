@@ -22,3 +22,4 @@ yarn-error.log*
 
 # Jetbrain product caches
 .idea/
+package-lock.json

@@ -28,6 +28,7 @@ const styles = {
   iconStyle: {
     width: '30px',
     height: '30px',
+    cursor: 'pointer'
   }
 };
 

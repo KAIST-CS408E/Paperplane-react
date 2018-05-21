@@ -3,6 +3,8 @@ import skyPath from '../static/el_capitan_bg.jpg';
 import TextArea from 'react-textarea-autosize';
 import axios from 'axios';
 import { REGISTER_URL } from '../constants';
+import Plane from 'react-icons/lib/fa/paper-plane';
+
 
 
 class Register extends Component {
@@ -31,7 +33,8 @@ class Register extends Component {
         <div style={styles.backgroundStyle}>
           <div style={styles.loginStyle}>
             <div style={styles.titleStyle}>
-              Paperplane
+              <Plane/>
+              <div style={{marginLeft: '10px'}}>Paperplane</div>
             </div>
             <input
                 style={styles.titleTextArea}
@@ -45,7 +48,7 @@ class Register extends Component {
                 onChange={event => this.setState({ nickname: event.target.value })} />
             <input
                 style={styles.titleTextArea}
-                type="text" value={this.state.password}
+                type="password" value={this.state.password}
                 placeholder={'Password'}
                 onChange={event => this.setState({ password: event.target.value })} />
             <div style={styles.buttonStyle} onClick={this.registerUser}>
@@ -87,26 +90,31 @@ const styles = {
     alignItems: 'center',
     backgroundColor: '#8B008B',
     borderRadius: '1.5rem',
-    height: '2rem',
+    height: '15%',
     fontWeight: 900,
     fontSize: '1.3rem',
     width: '10rem',
     marginTop: '5px',
+    cursor: 'pointer',
+    color: '#efefef',
   },
   loginStyle: {
-    height: '20vh',
+    height: '23%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '1.5rem',
     backgroundColor: 'rgb(255,255,255,0.5)',
-    width: '20vw',
+    width: '35%',
   },
   titleStyle: {
     fontSize: '1.2rem',
     fontWeight: 800,
-
+    width: '55%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
   }
 };
 

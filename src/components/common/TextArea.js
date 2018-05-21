@@ -11,6 +11,7 @@ class TextArea extends Component {
   render() {
     return(
       <div
+        style={styles.textArea}
         onInput={this.emitChange}
         onBlur={this.emitChange}
         contentEditable
@@ -23,9 +24,8 @@ class TextArea extends Component {
   }
 
   emitChange() {
-    var html = ReactDOM.findDOMNode(this).innerHTML;
+    let html = ReactDOM.findDOMNode(this).innerHTML;
     if (this.props.onChange && html !== this.lastHtml) {
-
       this.props.onChange({
         target: {
           value: html
@@ -35,5 +35,18 @@ class TextArea extends Component {
     this.lastHtml = html;
   }
 }
+
+const styles = {
+  textArea: {
+    border: '1px solid #efefef',
+    padding: '0.8rem',
+    fontSize: '1.2rem',
+    fontWeight: 400,
+    lineHeight: '160%',
+    display: 'block',
+    width: '90%',
+    outline: 'none',
+  },
+};
 
 export default TextArea;

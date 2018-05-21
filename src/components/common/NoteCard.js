@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 
-class PaperCard extends Component {
+class NoteCard extends Component {
   render() {
     const { containerStyle, titleStyle, buttonStyle } = styles;
     return (
       <NavLink to={`hi2/${this.props.id}`}>
         <div style={containerStyle}>
-          <h1 style={titleStyle}>{this.props.title}</h1>
-          <NavLink to={`hi3/${this.props.id}`}><div style={buttonStyle}>Others' Note</div></NavLink>
+          <h1 style={titleStyle}>{this.props.id}'s note</h1>
+          <div>
+            <h2 style={{display: 'inline', color: '#444444'}}>32 votes&nbsp;&nbsp;&nbsp;&nbsp;</h2>
+            <h2 style={{display: 'inline', color: '#444444'}}>1232 views</h2>
+          </div>
         </div>
       </NavLink>
     );
@@ -17,36 +20,26 @@ class PaperCard extends Component {
 
 const styles = {
   containerStyle: {
-    margin: 'auto',
-    width: 720,
+    marginLeft: '12px',
+    marginRight: '12px',
+    width: 400,
     height: 100,
     borderRadius: 4,
     border: '1px solid #EEEEEE',
     boxShadow: '1px 1px #CCCCCC',
     padding: '10px 20px',
-    paddingRight: 104,
+    textAlign: 'left',
     position: 'relative',
     marginTop: 24,
-    display: 'flex',
-    alignItems: 'center'
+    display: 'inline-flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
   },
   titleStyle: {
     color: 'black',
     fontSize: 21,
     fontWeight: '500',
   },
-  buttonStyle: {
-    backgroundColor: '#1453a5',
-    width: 84,
-    color: 'white',
-    fontSize: 18,
-    borderRadius: 4,
-    padding: '4px 8px',
-    position: 'absolute',
-    boxShadow: '1px 1px #CCCCCC',
-    top: 18,
-    right: 20,
-  }
 };
 
-export default PaperCard;
+export default NoteCard;

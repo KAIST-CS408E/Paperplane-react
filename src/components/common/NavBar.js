@@ -24,6 +24,7 @@ const styles = {
     backgroundColor: '#1453a5',
     position: 'fixed',
     width: '100%',
+    zIndex: 1000,
   },
   containerStyle : {
     maxWidth: 1200,

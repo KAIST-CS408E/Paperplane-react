@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import NavBar from './components/common/NavBar';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Body from './components/Body';
+import PaperList from './components/PaperList';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
@@ -38,7 +39,8 @@ class App extends Component {
             <Route exact path="/" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/main" component={Body} />
-            <Route exact path="/hi2" component={Body} />
+            <Route exact path="/hi2/:paperId" component={Body} />
+            <Route exact path="/home" component={PaperList} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/summary/:paperId" component={Summary} />
             <Redirect from="/" to="/" />

@@ -185,14 +185,15 @@ class Body extends Component {
   }
 
   async componentWillMount() {
+    const URL = `${BASE_URL}papers/${this.props.match.params.paperId}`;
     const { cookies } = this.props;
     const _id = cookies.get('_id');
     this.setState({_id});
 
     /* Fetch the paper from the server and save to state. */
-    await axios.get(PAPER_URL)
+    await axios.get(URL)
       .then((res) => {
-        const paper = res.data[0];
+        const paper = res.data;
         this.setState({
           paper,
           sections: paper.sections,
@@ -585,7 +586,6 @@ class Body extends Component {
   }
 
   getMemoModals() {
-    console.log(this.state.memoModals);
     return (
         this.state.memoModals.map((e, i) => <DraggableModal key={i * 300} id={`memoModal_${i * 300}`} title={e.title} content={e.content}/>)
     )

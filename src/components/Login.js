@@ -31,7 +31,7 @@ class Login extends Component {
         cookies.set('id', id, { path: '/' });
         cookies.set('nickname', nickname, { path: '/' });
         cookies.set('_id', _id, { path: '/' });
-        this.props.history.replace('/hi2');
+        this.props.history.replace('/home');
       })
       .catch((e) => console.log(e));
   }

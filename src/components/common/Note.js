@@ -8,6 +8,7 @@ import { debounce, contentEmbededHTML, popUpModalOnClick } from '../../utils';
 import {NOTE_URL} from '../../constants';
 import axios from 'axios';
 import Pencil from 'react-icons/lib/fa/pencil';
+import TrashCan from 'react-icons/lib/fa/trash';
 
 class Note extends Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class Note extends Component {
       content: '',
       noteId: '',
       isHovering: false,
+      editMode: false,
     };
 
     this.handleMouseHover = this.handleMouseHover.bind(this);
@@ -118,11 +120,13 @@ class Note extends Component {
 
           <header className="card-header"
                   onMouseEnter={this.handleMouseHover}
-                  onMouseLeave={this.handleMouseHover}>
+                  onMouseLeave={this.handleMouseHover}
+                  style={styles.noteTitleStyle}>
             <p className="card-header-title">
               {this.state.title || "No Title"}
               {this.state.isHovering ? <Pencil style={styles.iconStyle} onClick={(e) => this.changeTitleMode(e)}/> : null}
             </p>
+            {this.state.isHovering ? <TrashCan style={{...styles.iconStyle, marginRight: '10px'}} onClick={(e) => this.deleteNote(e)}/> : null}
           </header>
         ) :
         (
@@ -132,16 +136,24 @@ class Note extends Component {
               </div>
             </header>
 
-        )
+        );
     const content = contentEmbededHTML(this.state.content);
 
     return (
       <Collapsible trigger={trigger} transitionTime={100}>
         {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
         <div class="card-content">
-          <div class="content" dangerouslySetInnerHTML={{__html: content}}>
+          {
+            this.state.editMode ?
+                <TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} /> :
+                <div style={{marginBottom: '0', fontSize: '1.3rem'}} class="content" dangerouslySetInnerHTML={{__html: content}} />
+          }
             {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
-          </div>
+          <a style={styles.actionStyle} onClick={() => this.setState(prevState => {return {editMode: !prevState.editMode}})}>
+            {this.state.editMode ? 'Save' : 'Edit'}
+          </a>
+          <a style={styles.actionStyle}>Copy</a>
+          <a style={styles.actionStyle}>Hide</a>
         </div>
       </Collapsible>
     );
@@ -181,12 +193,15 @@ const styles = {
   noteTitleStyle: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginRight: '5px',
     alignItems: 'center',
     cursor: 'pointer'
   },
   noteCardStyle: {
     width: '80%',
+  },
+  actionStyle: {
+    marginRight: '5px',
+    fontSize: '0.9rem',
   }
 };
 

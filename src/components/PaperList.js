@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
 
 import PaperCard from './common/PaperCard';
 
@@ -12,14 +13,12 @@ class PaperList extends Component {
   }
 
   componentWillMount() {
-    axios.get('http://ec2-18-191-57-158.us-east-2.compute.amazonaws.com/api/papers').
-    then((response) => {
-      this.setState({
-        paperList: response.data,
-      })
-    }).catch((response => {
-
-    }));
+    axios.get(`${BASE_URL}papers`)
+      .then((response) => {
+        this.setState({
+          paperList: response.data,
+        })
+      }).catch(alert);
   }
 
   render() {

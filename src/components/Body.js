@@ -183,14 +183,13 @@ class Body extends Component {
   }
 
   async componentWillMount() {
-    const URL = `${BASE_URL}papers/${this.props.match.params.paperId}`;
     const { cookies } = this.props;
     const _id = cookies.get('_id');
     this.setState({_id});
 
     /* Fetch the paper from the server and save to state. */
-    const paper = await axios.get(PAPER_URL)
-      .then(res => res.data[0])
+    const paper = await axios.get(`${BASE_URL}papers/${this.props.match.params.paperId}`)
+      .then(res => res.data)
       .catch(alert);
     this.setState({
       paper,

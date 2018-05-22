@@ -8,7 +8,6 @@ class SectionSummaryForm extends Component {
     super(props);
 
     this.state = {
-      isHidden: false,
       isUpdating: false,
       originalSummary: '',
       summary: '',
@@ -21,10 +20,6 @@ class SectionSummaryForm extends Component {
       originalSummary: this.props.summary.summary,
     })
   }
-
-  hideForm = () => {
-    this.setState({ isHidden: true });
-  };
 
   updateLocalSummary = (e) => {
     const summary = e.target.value;
@@ -56,20 +51,18 @@ class SectionSummaryForm extends Component {
 
   render() {
     return (
-      <div className="card" style={{ ...styles.sectionSummaryFormStyle, display: this.state.isHidden ? 'none' : 'block' }}>
+      <div className="card" style={styles.sectionSummaryFormStyle}>
         <div className="card-content" style={styles.textAreaStyle}>
           <textarea className="textarea" placeholder="How about leaving a short summary for the previous section?"
                     value={this.state.summary.summary}
                     onChange={this.updateLocalSummary} />
         </div>
         <div style={styles.buttonGroupStyle}>
-          {/*<button className={`button is-primary${this.isSummaryUpdated() ? '' : ' is-static'}`}*/}
           <button className={`button is-primary${this.state.isUpdating ? ' is-loading' : ''}`}
                   disabled={!this.isSummaryUpdated()}
                   style={styles.buttonStyle} onClick={this.updateSummary}>
             {this.isSummaryUpdated() ? 'Save!' : 'Saved!'}
           </button>
-          <button className="button" style={styles.buttonStyle} onClick={this.hideForm}>Hide</button>
           <div style={{ clear: 'both' }} />
         </div>
       </div>
@@ -90,7 +83,6 @@ const styles = {
   },
   buttonStyle: {
     float: 'right',
-    marginLeft: '15px',
   },
 };
 

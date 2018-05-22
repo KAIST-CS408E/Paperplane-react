@@ -167,7 +167,7 @@ class Body extends Component {
       activeModal: false,
       memoModals: [],
       summaries: null,
-      summariesLoaded: false,
+      notesLoaded: false,
       search: false,
       searchNotes: [],
     };
@@ -178,7 +178,6 @@ class Body extends Component {
     this.appendModal = this.appendModal.bind(this);
     this.searchNotes = this.searchNotes.bind(this);
     this.hideModal = this.hideModal.bind(this);
-    this.getNote = this.getNote.bind(this);
     this.addRecommendNote = this.addRecommendNote.bind(this);
     this.cancelRecommend = this.cancelRecommend.bind(this);
     this.detectRecommend = this.detectRecommend.bind(this);
@@ -191,31 +190,27 @@ class Body extends Component {
     this.setState({_id});
 
     /* Fetch the paper from the server and save to state. */
-    await axios.get(URL)
-      .then((res) => {
-        const paper = res.data;
-        this.setState({
-          paper,
-          sections: paper.sections,
-          paperContent: {
-            __html: paper.content,
-          },
-          _paperID: paper._id,
-          paperLoaded: true,
-        });
-      })
-      .catch();
+    const paper = await axios.get(PAPER_URL)
+      .then(res => res.data[0])
+      .catch(alert);
+    this.setState({
+      paper,
+      sections: paper.sections,
+      paperContent: {
+        __html: paper.content,
+      },
+      _paperID: paper._id,
+      paperLoaded: true,
+    });
 
     /* Fetch notes from the server and save to state. */
     const notes = await axios.get(`${NOTE_URL}/?uid=${_id}&paperId=${paper._id}`)
-      .then((res) => {
-        return res.data;
-      })
-      .catch((e) => console.log(e));
+      .then(res => res.data)
+      .catch(alert);
     this.setState({ notes });
 
-    /* Ready to render section summary form into the paper. */
-    this.setState({ summariesLoaded: true });
+    /* Now ready to render section summary form into the paper. */
+    this.setState({ notesLoaded: true });
   }
 
   componentDidUpdate() {
@@ -236,7 +231,6 @@ class Body extends Component {
 
     /* Add onClickListener to figures and equations. */
     const prepareContentModal = () => {
-      this.getNote();
       const addModalListener = (item) => {
         return (link) => {
           link.removeAttribute('href');
@@ -281,25 +275,11 @@ class Body extends Component {
       this.setState({ paperLoaded: false });
     }
 
-    if (this.state.summariesLoaded) {
+    if (this.state.notesLoaded) {
       prepareSectionSummary();
-      this.setState({ summariesLoaded: false });
+      this.setState({ notesLoaded: false });
     }
   }
-
-  getNote() {
-    const { _id, _paperID } = this.state;
-    const url = `${NOTE_URL}/?uid=${_id}&paperId=${_paperID}`;
-    console.log(url);
-    axios.get(url)
-      .then((res) => {
-        const notes = res.data;
-        console.log(res);
-        this.setState({notes});
-      })
-      .catch((e) => console.log(e));
-  }
-
 
   addNote(section, title, content) {
     const { _id, _paperID } = this.state;
@@ -325,8 +305,6 @@ class Body extends Component {
       }
       axios.post(NOTE_URL, newNote)
         .then((res) => {
-          console.log(res);
-          // this.getNote();
           prevNotes[section][noteIndex] = {...newNote, _id: res.data._id};
           this.setState({notes: prevNotes});
         })

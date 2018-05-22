@@ -37,17 +37,25 @@ class SectionSummaryForm extends Component {
   render() {
     return (
       <div className="card" style={styles.sectionSummaryFormStyle}>
-        <div className="card-content" style={styles.textAreaStyle}>
-          <textarea ref={elem => this.summaryInput = elem} className="textarea"
-                    placeholder="How about leaving a short summary for the previous section?" />
-        </div>
-        <div style={styles.buttonGroupStyle}>
-          <button className={`button is-primary${this.state.isLoading ? ' is-loading' : ''}`}
-                  style={styles.buttonStyle} onClick={this.createSummaryNote}>
-            Submit!
-          </button>
-          <div style={{ clear: 'both' }} />
-        </div>
+        {
+          this.state.isSubmitted
+            ? <span style={styles.submittedTextStyle}>Summary submitted! You can check your summary at the right.</span>
+            : (
+              <div>
+                <div className="card-content" style={styles.textAreaStyle}>
+                  <textarea ref={elem => this.summaryInput = elem} className="textarea"
+                            placeholder="How about leaving a short summary for the previous section?" />
+                </div>
+                <div style={styles.buttonGroupStyle}>
+                  <button className={`button is-primary${this.state.isLoading ? ' is-loading' : ''}`}
+                          style={styles.buttonStyle} onClick={this.createSummaryNote}>
+                    Submit!
+                  </button>
+                  <div style={{ clear: 'both' }} />
+                </div>
+              </div>
+            )
+        }
       </div>
     );
   }
@@ -56,6 +64,12 @@ class SectionSummaryForm extends Component {
 const styles = {
   sectionSummaryFormStyle: {
     margin: '100px 0 200px 0',
+    height: '201px',
+    lineHeight: '201px',
+    textAlign: 'center',
+  },
+  submittedTextStyle: {
+    verticalAlign: 'middle',
   },
   textAreaStyle: {
     padding: '15px',

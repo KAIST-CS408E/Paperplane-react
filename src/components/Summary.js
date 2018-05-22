@@ -80,7 +80,7 @@ class Summary extends Component {
           </div>
           {
             paper.sections.map((section) => (
-              <SummarySection section={section} notes={notesBySection[section.number - 1] || []} />
+              <SummarySection paper={paper} section={section} notes={notesBySection[section.number - 1] || []} />
             ))
           }
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={true} />

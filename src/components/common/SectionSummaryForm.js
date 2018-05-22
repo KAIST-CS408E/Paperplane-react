@@ -8,60 +8,43 @@ class SectionSummaryForm extends Component {
     super(props);
 
     this.state = {
-      isUpdating: false,
-      originalSummary: '',
-      summary: '',
+      isLoading: false,
+      isSubmitted: false,
     };
   }
 
-  componentWillMount() {
-    this.setState({
-      summary: this.props.summary,
-      originalSummary: this.props.summary.summary,
-    })
-  }
+  createSummaryNote = () => {
+    this.setState({ isLoading: true });
 
-  updateLocalSummary = (e) => {
-    const summary = e.target.value;
-    this.setState((prevState) => (
-      {
-        summary: {
-          ...prevState.summary,
-          summary,
-        },
-      }
-    ));
-  };
-
-  updateSummary = () => {
-    this.setState({ isUpdating: true });
-    axios.put(`${BASE_URL}summaries/${this.state.summary._id}`, { summary: this.state.summary.summary })
-      .then(() => {
-        this.setState({
-          originalSummary: this.state.summary.summary,
-          isUpdating: false,
-        });
-      })
-      .catch(alert);
-  };
-
-  isSummaryUpdated = () => {
-    return this.state.summary.summary !== this.state.originalSummary;
+    const { uid, paperId, sectionNumber } = this.props;
+    const section = sectionNumber - 1;
+    axios.post(`${BASE_URL}notes`, {
+      uid,
+      paperId,
+      section,
+      isSummary: true,
+      title: 'Summary',
+      content: this.summaryInput.value,
+    }).then((res) => {
+      this.setState({
+        isLoading: false,
+        isSubmitted: true,
+      });
+      this.props.appendSummary(sectionNumber, res.data);
+    }).catch(alert);
   };
 
   render() {
     return (
       <div className="card" style={styles.sectionSummaryFormStyle}>
         <div className="card-content" style={styles.textAreaStyle}>
-          <textarea className="textarea" placeholder="How about leaving a short summary for the previous section?"
-                    value={this.state.summary.summary}
-                    onChange={this.updateLocalSummary} />
+          <textarea ref={elem => this.summaryInput = elem} className="textarea"
+                    placeholder="How about leaving a short summary for the previous section?" />
         </div>
         <div style={styles.buttonGroupStyle}>
-          <button className={`button is-primary${this.state.isUpdating ? ' is-loading' : ''}`}
-                  disabled={!this.isSummaryUpdated()}
-                  style={styles.buttonStyle} onClick={this.updateSummary}>
-            {this.isSummaryUpdated() ? 'Save!' : 'Saved!'}
+          <button className={`button is-primary${this.state.isLoading ? ' is-loading' : ''}`}
+                  style={styles.buttonStyle} onClick={this.createSummaryNote}>
+            Submit!
           </button>
           <div style={{ clear: 'both' }} />
         </div>

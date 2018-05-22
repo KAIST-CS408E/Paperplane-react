@@ -206,38 +206,13 @@ class Body extends Component {
       })
       .catch();
 
-    /* Fetch summaries from the server and save to state. */
-    await axios.get(`${BASE_URL}summaries?uid=${this.state._id}&paperId=${this.state.paper._id}`)
+    /* Fetch notes from the server and save to state. */
+    const notes = await axios.get(`${NOTE_URL}/?uid=${_id}&paperId=${paper._id}`)
       .then((res) => {
-        const summaries = res.data;
-        this.setState({ summaries });
+        return res.data;
       })
-      .catch(alert);
-
-    /* Create new summaries for sections without any summary currently. */
-    const summaryCreateReqs = [];
-    this.state.paper.sections.forEach(({ number: sectionNumber }) => {
-      if (!this.state.summaries[sectionNumber - 1]) {
-        summaryCreateReqs.push(
-          axios.post(`${BASE_URL}summaries`, {
-            uid: this.state._id,
-            paperId: this.state.paper._id,
-            section: sectionNumber - 1,
-            summary: '',
-          }).then((res) => {
-            this.setState((prevState) => {
-              return {
-                summaries: {
-                  ...prevState.summaries,
-                  [sectionNumber]: res.data
-                },
-              };
-            });
-          }).catch(alert)
-        );
-      }
-    });
-    await Promise.all(summaryCreateReqs);
+      .catch((e) => console.log(e));
+    this.setState({ notes });
 
     /* Ready to render section summary form into the paper. */
     this.setState({ summariesLoaded: true });
@@ -292,8 +267,9 @@ class Body extends Component {
         summaryFormContainer.id = `S${sectionNumber}-summary-form-container`;
         document.getElementById(`S${sectionNumber}`).appendChild(summaryFormContainer);
         ReactDOM.render(
-          <SectionSummaryForm paperId={this.state.paper._id} sectionNumber={sectionNumber}
-                              summary={this.state.summaries[sectionNumber - 1]} />,
+          <SectionSummaryForm uid={this.state._id} paperId={this.state.paper._id}
+                              sectionNumber={sectionNumber}
+                              appendSummary={this.appendSummary}/>,
           summaryFormContainer
         );
       });
@@ -371,6 +347,21 @@ class Body extends Component {
       };
     });
   }
+
+  appendSummary = (section, summary) => {
+    this.setState((prevState) => {
+      const updatedNotes = prevState.notes;
+      if (updatedNotes[section - 1]) {
+        updatedNotes[section - 1].push(summary);
+      } else {
+        updatedNotes[section - 1] = [summary];
+      }
+
+      return {
+        notes: updatedNotes,
+      };
+    });
+  };
 
   showModal(content) {
     this.setState({

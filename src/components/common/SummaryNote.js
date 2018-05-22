@@ -4,7 +4,7 @@ import { contentEmbededHTML } from '../../utils';
 
 class SummaryNote extends Component {
   render() {
-    const isSummary = this.props.isSummary;
+    const { isSummary } = this.props.note;
     return (
       <div style={{ ...styles.noteSummaryStyle, width: isSummary ? '100%' : '50%' }}>
         <h4 className="title is-4" style={styles.noteTitleStyle}>{this.props.note.title || 'No title'}</h4>

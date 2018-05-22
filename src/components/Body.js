@@ -166,7 +166,6 @@ class Body extends Component {
       paperLoaded: false,
       activeModal: false,
       memoModals: [],
-      summaries: null,
       notesLoaded: false,
       search: false,
       searchNotes: [],

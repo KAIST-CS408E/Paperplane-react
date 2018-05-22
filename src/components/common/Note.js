@@ -7,6 +7,7 @@ import TextArea from './TextArea';
 import { debounce, contentEmbededHTML, popUpModalOnClick } from '../../utils';
 import {NOTE_URL} from '../../constants';
 import axios from 'axios';
+import Pencil from 'react-icons/lib/fa/pencil';
 
 class Note extends Component {
   constructor(props) {
@@ -16,8 +17,10 @@ class Note extends Component {
       title: 'dd',
       content: '',
       noteId: '',
+      isHovering: false,
     };
 
+    this.handleMouseHover = this.handleMouseHover.bind(this);
     this.saveNote = debounce(this.saveNote, 1000);
     this.deleteNote = this.deleteNote.bind(this);
   }
@@ -34,6 +37,13 @@ class Note extends Component {
   componentDidUpdate() {
     popUpModalOnClick(document, this.props.paper, this.props.showModal);
   }
+
+  handleMouseHover() {
+    this.setState(prevState => {
+      return {isHovering: !prevState.isHovering}
+    });
+  }
+
 
   changeTitleMode(e) {
     this.setState({mode: 'fix'});
@@ -89,23 +99,50 @@ class Note extends Component {
       this.saveNote();
     }.bind(this);
 
+    // const trigger = this.state.mode === 'read' ?
+    //     (
+    //       <div style={styles.noteTitleStyle}>
+    //         <div>
+    //           {this.state.title} <img style={styles.iconStyle} src={editIconPath} onClick={(e) => this.changeTitleMode(e)} />
+    //         </div>
+    //         <img style={styles.iconStyle} src={deleteIconPath} onClick={(e) => this.deleteNote(e)} />
+    //       </div>
+    //     ) :
+    //     (
+    //       <div onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
+    //         <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
+    //       </div>
+    //     );
     const trigger = this.state.mode === 'read' ?
         (
-          <div style={styles.noteTitleStyle}>
-            <div>
-              {this.state.title} <img style={styles.iconStyle} src={editIconPath} onClick={(e) => this.changeTitleMode(e)} />
-            </div>
-            <img style={styles.iconStyle} src={deleteIconPath} onClick={(e) => this.deleteNote(e)} />
-          </div>
+
+          <header className="card-header"
+                  onMouseEnter={this.handleMouseHover}
+                  onMouseLeave={this.handleMouseHover}>
+            <p className="card-header-title">
+              {this.state.title || "No Title"}
+              {this.state.isHovering ? <Pencil style={styles.iconStyle} onClick={(e) => this.changeTitleMode(e)}/> : null}
+            </p>
+          </header>
         ) :
         (
-          <div onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
-            <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
-          </div>
-        );
+            <header className="card-header">
+              <div className="card-header-title" onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
+                <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
+              </div>
+            </header>
+
+        )
+    const content = contentEmbededHTML(this.state.content);
+
     return (
       <Collapsible trigger={trigger} transitionTime={100}>
-        <TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />
+        {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
+        <div class="card-content">
+          <div class="content" dangerouslySetInnerHTML={{__html: content}}>
+            {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
+          </div>
+        </div>
       </Collapsible>
     );
   }
@@ -137,6 +174,9 @@ const styles = {
   iconStyle: {
     width: '20px',
     height: '20px',
+    marginLeft: '10px',
+    paddingBottom: '4px',
+    color: 'gray',
   },
   noteTitleStyle: {
     display: 'flex',
@@ -144,6 +184,9 @@ const styles = {
     marginRight: '5px',
     alignItems: 'center',
     cursor: 'pointer'
+  },
+  noteCardStyle: {
+    width: '80%',
   }
 };
 

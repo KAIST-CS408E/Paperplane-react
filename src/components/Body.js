@@ -626,7 +626,7 @@ const styles = {
   },
   rightStyle: {
     width: '400px',
-    backgroundColor: '#828282',
+    backgroundColor: '#efefef',
   },
   paperStyle: {
     flex: 1,

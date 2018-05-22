@@ -18,29 +18,50 @@ class SummarySection extends Component {
     this.setState({ summary });
   }
 
+  componentWillUpdate() {
+    /* Reset content appearance flag. */
+    const { paper: { figures, equations } } = this.props;
+    const isFigureEmbeded = figures.reduce((flags, figure) => (
+      {
+        ...flags,
+        [figure.number]: false,
+      }
+    ));
+    const isEquationsEmbeded = equations.reduce((flags, equation) => (
+      {
+        ...flags,
+        [equation.number]: false,
+      }
+    ));
+    this.isContentEmbeded = { ...isFigureEmbeded, ...isEquationsEmbeded };
+  }
+
   getContents = (note) => {
+    const findContents = (contentRegex, note, contentType) => {
+      let contents = [];
+      let match;
+      while (true) {
+        match = contentRegex.exec(note);
+        if (!match) break;
+        const [ , number ] = match;
+        const contentNumber = `${contentType[0].toUpperCase()}${number}`;
+        if (this.isContentEmbeded[contentNumber]) continue;
+        const content = this.props.paper[`${contentType}s`].filter(content => content.number === contentNumber)[0];
+        contents.push(content);
+        this.isContentEmbeded[contentNumber] = true;
+      }
+
+      return contents;
+    };
+
+    if (!this.isContentEmbeded) return [];
     const figureRegex = /(?!<a class="embed-F\d+">)fig\.?(?:ure)?\s*(\d+)(?!<\/a>)/gi;
     const equationRegex = /(?!<a class="embed-E\d+">)eq\.?(?:uation)?\s*(\d+)(?!<\/a>)/gi;
 
-    let contents = [];
-    let match;
-    while (true) {
-      match = figureRegex.exec(note.content);
-      if (!match) break;
-      const [ , figureNumber ] = match;
-      const content = this.props.paper.figures.filter(figure => figure.number === `F${figureNumber}`)[0];
-      contents.push(content);
-    }
-
-    while (true) {
-      match = equationRegex.exec(note.content);
-      if (!match) break;
-      const [ , equationNumber ] = match;
-      const content = this.props.paper.equations.filter(equation => equation.number === `E${equationNumber}`)[0];
-      contents.push(content);
-    }
-
-    return contents;
+    return [
+      ...findContents(figureRegex, note.content, 'figure'),
+      ...findContents(equationRegex, note.content, 'equation'),
+    ];
   };
 
   render() {

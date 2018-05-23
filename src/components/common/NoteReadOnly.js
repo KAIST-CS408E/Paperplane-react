@@ -4,9 +4,10 @@ import './Note.css';
 import pinIconPath from '../../icons/pin_icon.png';
 import TextArea from './TextArea';
 import NoteContent from './NoteContent';
-import { debounce } from '../../utils';
+import {contentEmbededHTML, debounce} from '../../utils';
 import {NOTE_URL} from '../../constants';
 import axios from 'axios';
+import PinIcon from 'react-icons/lib/ti/pin';
 
 class NoteReadOnly extends Component {
   constructor(props) {
@@ -16,7 +17,9 @@ class NoteReadOnly extends Component {
       title: 'dd',
       content: '',
       noteId: '',
+      isHovering: false,
     };
+    this.handleMouseHover = this.handleMouseHover.bind(this);
     this.popUpModalOnClick = debounce(this.popUpModalOnClick, 500);
   }
 
@@ -32,6 +35,12 @@ class NoteReadOnly extends Component {
     return this.state.content
         .replace(figureRegex, (match, number) => `<a class="embed-F${number}" style="text-decoration: underline;">${match}</a>`)
         .replace(equationRegex, (match, number) => `<a class="embed-E${number}" style="text-decoration: underline;">${match}</a>`);
+  }
+
+  handleMouseHover() {
+    this.setState(prevState => {
+      return {isHovering: !prevState.isHovering}
+    });
   }
 
   /* TODO: REALLY, REALLY BAD IDEA to use debounce here... */
@@ -56,16 +65,37 @@ class NoteReadOnly extends Component {
   render() {
     let { title, content } = this.state;
     content = this.contentEmbeddedHTML();
+    // const trigger =
+    //     (
+    //         <div style={styles.noteTitleStyle}>
+    //           <div> {title} </div>
+    //           <img src={pinIconPath} onClick={(e) => this.props.pinNote(e, { title, content })}/>
+    //         </div>
+    //     );
+    // return (
+    //     <Collapsible trigger={trigger} transitionTime={100}>
+    //       <NoteContent html={content}/>
+    //     </Collapsible>
+    // );
     const trigger =
         (
-            <div style={styles.noteTitleStyle}>
-              <div> {title} </div>
-              <img src={pinIconPath} onClick={(e) => this.props.pinNote(e, { title, content })}/>
-            </div>
+          <header className="card-header"
+                  onMouseEnter={this.handleMouseHover}
+                  onMouseLeave={this.handleMouseHover}
+                  style={styles.noteTitleStyle}>
+            <p className="card-header-title">
+              { title || "No Title"}
+              {this.state.isHovering ? <PinIcon style={styles.iconStyle} onClick={(e) => this.props.pinNote(e, { title, content })} /> : null }
+            </p>
+          </header>
         );
+
     return (
         <Collapsible trigger={trigger} transitionTime={100}>
-          <NoteContent html={content}/>
+          <div class="card-content">
+            <div style={{marginBottom: '0', fontSize: '1.3rem'}} class="content" dangerouslySetInnerHTML={{__html: content}} />
+
+          </div>
         </Collapsible>
     );
   }
@@ -95,16 +125,20 @@ const styles = {
     outline: 'none',
   },
   iconStyle: {
-    width: '20px',
-    height: '20px',
+    width: '25px',
+    height: '25px',
+    marginLeft: '10px',
+    paddingBottom: '2px',
   },
   noteTitleStyle: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginRight: '5px',
     alignItems: 'center',
     cursor: 'pointer'
-  }
+  },
+  noteCardStyle: {
+    width: '80%',
+  },
 };
 
 export default NoteReadOnly;

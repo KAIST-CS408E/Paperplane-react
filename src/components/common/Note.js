@@ -152,8 +152,6 @@ class Note extends Component {
           <a style={styles.actionStyle} onClick={() => this.setState(prevState => {return {editMode: !prevState.editMode}})}>
             {this.state.editMode ? 'Save' : 'Edit'}
           </a>
-          <a style={styles.actionStyle}>Copy</a>
-          <a style={styles.actionStyle}>Hide</a>
         </div>
       </Collapsible>
     );

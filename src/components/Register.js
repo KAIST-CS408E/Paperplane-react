@@ -21,41 +21,59 @@ class Register extends Component {
   componentWillMount() {
   }
 
-  registerUser() {
+  registerUser(e) {
     const { id, nickname, password } = this.state;
     axios.post(REGISTER_URL, { id, nickname, password })
       .then((m) => this.props.history.push('/'))
       .catch((e) => console.log(e));
+    e.preventDefault();
   }
 
   render() {
     return (
-        <div style={styles.backgroundStyle}>
-          <div style={styles.loginStyle}>
-            <div style={styles.titleStyle}>
-              <Plane/>
-              <div style={{marginLeft: '10px'}}>Paperplane</div>
-            </div>
-            <input
-                style={styles.titleTextArea}
-                type="text" value={this.state.id}
-                placeholder={'Username'}
-                onChange={event => this.setState({ id: event.target.value })} />
-            <input
-                style={styles.titleTextArea}
-                type="text" value={this.state.nickname}
-                placeholder={'Nickname'}
-                onChange={event => this.setState({ nickname: event.target.value })} />
-            <input
-                style={styles.titleTextArea}
-                type="password" value={this.state.password}
-                placeholder={'Password'}
-                onChange={event => this.setState({ password: event.target.value })} />
-            <div style={styles.buttonStyle} onClick={this.registerUser}>
-              Register
+        <section style={{backgroundColor: '#F2F6FA'}} class="hero is-success is-fullheight">
+          <div class="hero-body">
+            <div class="container has-text-centered">
+              <div class="column is-4 is-offset-4">
+                <h3 class="title has-text-grey">Register</h3>
+                <p class="subtitle has-text-grey">Join Paperplane Now.</p>
+                <div class="box">
+                  <form onSubmit={(e) => this.registerUser(e)}>
+                    <div class="field">
+                      <div class="control">
+                        <input class="input"
+                               placeholder="Username"
+                               onChange={event => this.setState({ id: event.target.value })}
+                               value={this.state.id} />
+                      </div>
+                    </div>
+                    <div class="field">
+                      <div class="control">
+                        <input class="input"
+                               placeholder="Nickname"
+                               onChange={event => this.setState({ nickname: event.target.value })}
+                               value={this.state.nickname} />
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="control">
+                        <input class="input"
+                               type="password"
+                               placeholder="Password"
+                               onChange={event => this.setState({ password: event.target.value })}
+                               value={this.state.password} />
+                      </div>
+                    </div>
+                    <button class="button is-block is-info is-large is-fullwidth">Login</button>
+
+
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
     );
   }
 }

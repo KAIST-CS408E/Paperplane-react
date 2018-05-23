@@ -21,10 +21,9 @@ class Login extends Component {
   componentWillMount() {
   }
 
-  loginUser() {
+  loginUser(e) {
     const { id, password } = this.state;
     const { cookies } = this.props;
-
     axios.post(LOGIN_URL, {id, password})
       .then((res) => {
         const {id, nickname, _id} = res.data;
@@ -34,37 +33,54 @@ class Login extends Component {
         this.props.history.replace('/home');
       })
       .catch((e) => console.log(e));
+    e.preventDefault();
   }
 
   render() {
     return (
-      <div style={styles.backgroundStyle}>
-        <div style={styles.loginStyle}>
-          <div style={styles.titleStyle}>
-            <Plane/>
-            <div style={{marginLeft: '10px'}}>Paperplane</div>
-          </div>
-          <input
-              style={styles.titleTextArea}
-              type="text" value={this.state.id}
-              placeholder={'Username'}
-              onChange={event => this.setState({ id: event.target.value })} />
-          <input
-              style={styles.titleTextArea}
-              type="password" value={this.state.password}
-              placeholder={'Password'}
-              onChange={event => this.setState({ password: event.target.value })} />
-          <div style={styles.buttonStyle} onClick={this.loginUser}>
-            Login
-          </div>
+        <section style={{backgroundColor: '#F2F6FA'}} class="hero is-success is-fullheight">
+          <div class="hero-body">
+            <div class="container has-text-centered">
+              <div class="column is-4 is-offset-4">
+                <h3 class="title has-text-grey">Login</h3>
+                <p class="subtitle has-text-grey">Please login to proceed.</p>
+                <div class="box">
+                  <form onSubmit={(e) => this.loginUser(e)}>
+                    <div class="field">
+                      <div class="control">
+                        <input class="input"
+                               placeholder="Username"
+                               onChange={event => this.setState({ id: event.target.value })}
+                               value={this.state.id} />
+                      </div>
+                    </div>
 
-            <div style={{...styles.buttonStyle, backgroundColor: '#595970'}} >
-              <Link to='/register' style={{color: '#FFFFFF'}}>
-                Register
-              </Link>
+                    <div class="field">
+                      <div class="control">
+                        <input class="input"
+                               type="password"
+                               placeholder="Password"
+                               onChange={event => this.setState({ password: event.target.value })}
+                               value={this.state.password} />
+                      </div>
+                    </div>
+                    <button class="button is-block is-info is-large is-fullwidth" onClick={this.loginUser}>Login</button>
+
+
+                  </form>
+                </div>
+                <p class="has-text-grey">
+                  New to us?
+                  <a>
+                    <Link to='/register' style={{marginLeft: '5px'}}>
+                      Sign Up
+                    </Link>
+                  </a>
+                </p>
+              </div>
             </div>
-        </div>
-      </div>
+          </div>
+        </section>
     );
   }
 }
@@ -76,9 +92,12 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundImage: `url(${skyPath})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: '100% 100%',
+  },
+  loginInputStyle: {
+    height: '2.5rem',
+    fontSize: '1.2rem',
   },
   titleTextArea: {
     borderWidth: '0px',
@@ -106,6 +125,11 @@ const styles = {
     marginTop: '5px',
     cursor: 'pointer',
     color: '#efefef',
+  },
+  loginBoxStyle: {
+    height: '23%',
+
+    width: '35%',
   },
   loginStyle: {
     height: '23%',

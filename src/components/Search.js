@@ -1,58 +1,64 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import NoteReadOnly from './common/NoteReadOnly';
+import SearchResult from './SearchResult';
 import {NOTE_URL, PAPER_URL} from "../constants";
+import SearchBox from './common/SearchBox';
+import { withCookies } from 'react-cookie';
 
 class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notes: null,
+      notes: [],
       paperID: '',
-      userID: ''
+      userID: '',
     }
+    this.searchNotes = this.searchNotes.bind(this);
   }
   componentWillMount() {
-    const { cookies, paperID } = this.props;
+    const { cookies, paperID, searchSection } = this.props;
     const userID = cookies.get('_id');
     this.setState({userID, paperID});
-    this.getNote();
+
+    if (searchSection > 0) {
+      this.searchNotes('', searchSection);
+    }
   }
-  getNote() {
-    const { userID, paperID } = this.state;
-    const url = `${NOTE_URL}/?uid=${userID}&paperId=${paperID}`;
+  searchNotes(query, section) {
+    const { cookies, paperID } = this.props;
+    const userID = cookies.get('_id');
+
+    const url = NOTE_URL + `?uid=${userID}&paperId=${paperID}`  + (query ? `&query=${query}`: '') + (section ? `&section=${section}`: '');
+    console.log(url);
+    let notes = [];
+
     axios.get(url)
       .then((res) => {
-        const notes = res.data;
-        this.setState({notes});
+        console.log(res);
+        const data = res.data;
+        const keys = Object.keys(data);
+        for (let i = 0; i < keys.length ; i += 1) {
+          const sectionNotes = data[keys[i]];
+          notes = notes.concat(sectionNotes);
+        }
+        this.setState({
+          notes
+        });
       })
-      .catch((e) => console.log(e));
-  }
-  getNoteComponent() {
-    let noteComponent = [];
+      .catch(err => {
+        console.log(err);
+      })
 
-    const { notes } = this.state;
-    const keys = notes.keys();
-
-    for (let i = 0; i < keys.length ; i += 1) {
-      const key = keys[i];
-      let sectionNotes = notes[i];
-      for (let j = 0 ; j < sectionNotes.length ; j += 1){
-        let note = sectionNotes[j];
-        noteComponent.push(<NoteReadOnly key={note._id} noteId={note._id} title={note.title} content={note.content}/>);
-      }
-    }
-    return noteComponent;
   }
 
   render() {
-    const noteComponent = this.getNoteComponent();
     return (
       <div>
-        {noteComponent}
+        <SearchBox sectionList={this.props.sectionList} searchNotes={this.searchNotes} searchSection={this.props.searchSection || 0} changeMode={this.props.changeSearchMode} />
+        <SearchResult notes={this.state.notes} paper={this.props.paper} pinNote={this.props.pinNote}/>
       </div>
     )
   }
 }
 
-export default Search;
+export default withCookies(Search);

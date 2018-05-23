@@ -3,7 +3,7 @@ import axios from 'axios';
 import Title from './common/Title';
 import Note from './common/Note';
 import Recommend from './common/Recommend';
-import SearchResult from './SearchResult';
+import Search from './Search';
 import DraggableModal from './common/DraggableModal';
 import SearchBox from './common/SearchBox';
 import ContentModal from './common/ContentModal';
@@ -25,6 +25,43 @@ const RECOMMEND = [
 
 
 class Body extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      paperContent: {
+        __html: '',
+      },
+      sections: [],
+      paper: null,
+      modalContent: null,
+      _id: '',
+      selected: false,
+      selection: null,
+      _paperID: '',
+      recommend: null,
+      recommendElems: [],
+      paperLoaded: false,
+      activeModal: false,
+      memoModals: [],
+      notesLoaded: false,
+      search: false,
+      searchNotes: [],
+      searchSection: 0,
+    };
+
+    this.highlight = this.highlight.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.changeSearchMode = this.changeSearchMode.bind(this);
+    this.appendModal = this.appendModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.addRecommendNote = this.addRecommendNote.bind(this);
+    this.cancelRecommend = this.cancelRecommend.bind(this);
+    this.detectRecommend = this.detectRecommend.bind(this);
+  }
+
+
   highlight_helper(paragraph, start, end) {
     let _start = start;
     let _end = end;
@@ -145,41 +182,6 @@ class Body extends Component {
       }
       event.stopPropagation();
     });
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      notes: [],
-      paperContent: {
-        __html: '',
-      },
-      sections: [],
-      paper: null,
-      modalContent: null,
-      _id: '',
-      selected: false,
-      selection: null,
-      _paperID: '',
-      recommend: null,
-      recommendElems: [],
-      paperLoaded: false,
-      activeModal: false,
-      memoModals: [],
-      notesLoaded: false,
-      search: false,
-      searchNotes: [],
-    };
-
-    this.highlight = this.highlight.bind(this);
-    this.showModal = this.showModal.bind(this);
-    this.changeMode = this .changeMode.bind(this);
-    this.appendModal = this.appendModal.bind(this);
-    this.searchNotes = this.searchNotes.bind(this);
-    this.hideModal = this.hideModal.bind(this);
-    this.addRecommendNote = this.addRecommendNote.bind(this);
-    this.cancelRecommend = this.cancelRecommend.bind(this);
-    this.detectRecommend = this.detectRecommend.bind(this);
   }
 
   async componentWillMount() {
@@ -513,34 +515,12 @@ class Body extends Component {
     */
   }
 
-  searchNotes(query) {
-    const { _id, _paperID } = this.state;
-    const url = NOTE_URL + `?uid=${_id}&paperId=${_paperID}&query=${query}`;
-    let searchNotes = [];
-    axios.get(url)
-        .then((res) => {
-          console.log(res);
-          const data = res.data;
-          const keys = Object.keys(data);
-          for (let i = 0; i < keys.length ; i += 1) {
-            const sectionNotes = data[keys[i]];
-            searchNotes = searchNotes.concat(sectionNotes);
-          }
-          this.setState({
-            searchNotes,
-            search: true
-          });
-        })
-        .catch(err => {
-          console.log(err);
-        })
-
-  }
-
-  changeMode() {
-    this.setState({
-      search: false,
-      searchNotes: [],
+  changeSearchMode() {
+    this.setState(prevState => {
+      return {
+        search: !prevState.search,
+        searchNotes: [],
+      }
     });
   }
 
@@ -567,7 +547,7 @@ class Body extends Component {
       let section = sections[i];
       ex.push(section);
       noteComponent.push(
-          <Title key={i + 100002} title={section.name} index={i + 1} addNote={() => this.addNote(i)} />
+          <Title key={i + 100002} title={section.name} index={i + 1} addNote={() => this.addNote(i)} searchSection={() => this.setState({search: true, searchSection: i+1})}/>
       );
 
       if (notes.hasOwnProperty(i)) {
@@ -603,8 +583,16 @@ class Body extends Component {
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={false}/>
         </div>
         <div style={styles.rightStyle}>
-          <SearchBox searchNotes={this.searchNotes}  changeMode={this.changeMode} />
-          {this.state.search ? <SearchResult notes={this.state.searchNotes} paper={this.state.paper} pinNote={this.appendModal}/> : noteComponent}
+          {
+            this.state.search ?
+              null :
+              (
+                  <div style={styles.searchTitle}>
+                    <a style={{fontWeight: '600', fontSize: '1.3rem'}} onClick={this.changeSearchMode}> Search What Others Think.. ></a>
+                  </div>
+              )
+          }
+          {this.state.search ? <Search sectionList={this.state.sections} searchSection={this.state.searchSection} paper={this.state.paper} pinNote={this.appendModal} changeSearchMode={this.changeSearchMode} paperID={this.state._paperID}/> : noteComponent}
         </div>
         {modalComponent}
       </div>
@@ -661,6 +649,13 @@ const styles = {
   boxStyle: {
     position: 'relative',
   },
+  searchTitle: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    backgroundColor: 'white',
+    height: '2rem'
+  }
 };
 
 export default withCookies(Body);

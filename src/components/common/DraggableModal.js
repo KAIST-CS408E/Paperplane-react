@@ -78,11 +78,15 @@ const styles = {
     left: '100px',
     width: '40vw',
     height: '25vh',
+
+    borderTopLeftRadius: '6px',
+    borderTopRightRadius: '6px',
+
+    '-webkit-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
+    '-moz-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
+    'box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
   },
   modalStyle: {
-    '-webkit-box-shadow': '2px 2px 2px 2px #bbb',
-    '-moz-box-shadow': '2px 2px 2px 2px #bbb',
-    'box-shadow': '2px 2px 2px 2px #bbb',
     width: '40vw',
     height: '25vh',
   },

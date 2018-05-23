@@ -1,33 +1,40 @@
 import React, { Component } from 'react';
-import addIconPath from '../../icons/add_icon.png';
+import NoteAddIcon from 'react-icons/lib/md/note-add';
+import SearchIcon from 'react-icons/lib/md/search';
 
 class Title extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+      isHovering: false,
+    }
+
+    this.handleMouseHover = this.handleMouseHover.bind(this);
+  }
+  handleMouseHover() {
+    this.setState(prevState => {
+      return {isHovering: !prevState.isHovering}
+    });
+  }
   render() {
     const title = `${this.props.index}. ${this.props.title}`;
-    // return (
-    //     <section style={styles.textStyle} class="hero is-small is-link is-bold">
-    //       <div class="hero-body">
-    //         <div class="container">
-    //           <h1 style={{display: 'flex', justifyContent: 'space-between'}}class="title">
-    //             {title}
-    //
-    //             <img style={styles.iconStyle} src={addIconPath} onClick={this.props.addNote} />
-    //           </h1>
-    //         </div>
-    //       </div>
-    //     </section>
-    //
-    // );
+    const { isHovering } = this.state;
     return (
-        <div style={styles.titleStyle}>
-          {title}
-          <img style={styles.iconStyle} src={addIconPath} onClick={this.props.addNote} />
+        <div style={styles.titleStyle}
+             onMouseEnter={this.handleMouseHover}
+             onMouseLeave={this.handleMouseHover}>
+          <div style={{width: '25vw'}}>{title}</div>
+          {
+            isHovering ? (
+                <div style={{display: 'flex'}}>
+                  <SearchIcon style={styles.iconStyle} onClick={this.props.searchSection}/>
+                  <NoteAddIcon style={styles.iconStyle} onClick={this.props.addNote}  />
+                </div>
+            ) : null
+          }
         </div>
-    )
-    {/*<div style={styles.textStyle}>*/}
-    {/*{title}*/}
-    {/*<img style={styles.iconStyle} src={addIconPath} onClick={this.props.addNote} />*/}
-    {/*</div>*/}
+    );
   }
 }
 
@@ -49,8 +56,8 @@ const styles = {
     padding: '10px',
   },
   iconStyle: {
-    width: '30px',
-    height: '30px',
+    width: '25px',
+    height: '25px',
     cursor: 'pointer',
     marginLeft: '3px'
   }

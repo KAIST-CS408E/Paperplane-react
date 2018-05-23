@@ -65,7 +65,7 @@ class Register extends Component {
                                value={this.state.password} />
                       </div>
                     </div>
-                    <button class="button is-block is-info is-large is-fullwidth">Login</button>
+                    <button class="button is-block is-info is-large is-fullwidth">Register</button>
 
 
                   </form>

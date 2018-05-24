@@ -8,7 +8,9 @@ class NoteList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      paper: null,
+      paper: {
+        title: null
+      },
       commentList: [],
     }
   }
@@ -16,28 +18,34 @@ class NoteList extends Component {
   componentWillMount() {
     axios.get(`${BASE_URL}/papers/${this.props.match.params.paperId}`).
     then((response) => {
+      console.log(response);
       this.setState({
-        paper: response.data.title,
+        paper: response.data,
       })
     }).catch((response) => {
 
     });
     axios.get(`${BASE_URL}notes?paperId=${this.props.match.params.paperId}`).
     then((response) => {
+      console.log(response);
       const idList = [];
-      console.log(response.data)
       const resultList = response.data;
       let i;
       for (i in resultList) {
         const sectionComments = resultList[i];
         for(let j =0; j < sectionComments.length; j++) {
-          idList.unshift(sectionComments[j].createdBy);
+          idList.unshift({name: sectionComments[j].createdUserName, id: sectionComments[j].createdUserId, uid: sectionComments[j].createdBy});
         }
       }
-      const new_idList = idList.filter((el, i, a) => i === a.indexOf(el));
+      const new_idList = idList.filter((el, i, a) => {
+        return i === a.findIndex((t) => {
+            return t.name === el.name && t.id === el.id;
+          });
+      });
       this.setState({
         commentList: new_idList,
       });
+      console.log(new_idList);
     }).catch((response) => {
 
     });
@@ -45,11 +53,11 @@ class NoteList extends Component {
   render() {
     const { containerStyle, titleStyle } = styles;
     const noteList = this.state.commentList.map((e) => {
-      return <NoteCard id={e}/>;
+      return <NoteCard user={e} paperId={this.props.match.params.paperId} />;
     });
     return(
       <div style={containerStyle}>
-        <h1 style={titleStyle}>Other people's notes on {this.state.paper}</h1>
+        <h1 style={titleStyle}>Other people's notes on {this.state.paper.title}</h1>
         { noteList }
       </div>
     );

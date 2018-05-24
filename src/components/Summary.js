@@ -29,22 +29,36 @@ class Summary extends Component {
     const id = cookies.get('id');
     const nickname = cookies.get('nickname');
     const { paperId } = this.props.match.params;
-    this.setState({
-      uid,
-      paperId,
-      id,
-      nickname,
-    });
+    // this.setState({
+    //   uid,
+    //   paperId,
+    //   id,
+    //   nickname,
+    // });
+
+    // if(this.props.match.params.userId !== uid) {
+    //   axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
+    // }
 
     axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
       .then((res) => {
+        const result = res.data[0][0];
+        this.setState({
+          uid : result.createdBy,
+          paperId : paperId,
+          id : result.createdUserId,
+          nickname : result.createdUserName,
+        });
+        console.log(result);
         this.setState({ notesBySection: res.data });
+
       })
       .catch(alert);
 
     axios.get(`${BASE_URL}papers/${paperId}`)
       .then((res) => {
         this.setState({ paper: res.data });
+        console.log(this.state);
       })
       .catch(alert);
   };
@@ -70,6 +84,7 @@ class Summary extends Component {
 
   render() {
     const { paper, notesBySection } = this.state;
+    console.log(this.state);
     return !paper || !notesBySection
       ? <div></div>
       : (

@@ -40,11 +40,10 @@ class Profile extends Component {
   render() {
     return (
       <div style={styles.profileContainerStyle}>
-        <h2 className="title is-2">{`${this.state.nickname} (${this.state.id})`}</h2>
-        <p className="title is-3">Notes:</p>
+        <h2 className="title is-2" style={styles.profileTitleStyle}>My Notes</h2>
         <div className="content">
           <ul style={styles.paperListStyle}>
-            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}`} key={paper._id}>{paper.title}</Link></li>)}
+            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}/${this.state.uid}`} key={paper._id}>{paper.title}</Link></li>)}
           </ul>
         </div>
       </div>
@@ -55,8 +54,12 @@ class Profile extends Component {
 const styles = {
   profileContainerStyle: {
     width: '60vw',
-    margin: 'auto',
+    margin: '60px auto 0 auto',
     paddingTop: '20px',
+  },
+  profileTitleStyle: {
+    textAlign: 'center',
+    marginBottom: '40px',
   },
   paperListStyle: {
     fontSize: '20px',

@@ -1,0 +1,36 @@
+.speech-bubble {
+    position: relative;
+    background: #444444;
+    border-radius: .4em;
+    display: flex;
+    width: 84px;
+    height: 36px;
+}
+
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: #444444;
+    border-bottom: 0;
+    margin-left: -10px;
+    margin-bottom: -10px;
+}
+
+.bubble-selection-left:hover {
+    background-color: #222222;
+    border-radius: .4em 0px 0px .4em;
+}
+
+.bubble-selection-right:hover {
+    background-color: #222222;
+    border-radius: 0em .4em .4em 0em;
+}
+
+.nonactive {
+    display: none;
+}

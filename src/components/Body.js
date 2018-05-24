@@ -6,6 +6,7 @@ import Recommend from './common/Recommend';
 import Search from './Search';
 import DraggableModal from './common/DraggableModal';
 import SearchBox from './common/SearchBox';
+import SelectionBox from './common/SelectionBox';
 import ContentModal from './common/ContentModal';
 import SectionSummaryForm from './common/SectionSummaryForm';
 import { BASE_URL, NOTE_URL, PAPER_URL } from '../constants';
@@ -52,6 +53,7 @@ class Body extends Component {
     };
 
     this.highlight = this.highlight.bind(this);
+    this.highlight_note = this.highlight_note.bind(this);
     this.showModal = this.showModal.bind(this);
     this.changeSearchMode = this.changeSearchMode.bind(this);
     this.appendModal = this.appendModal.bind(this);
@@ -113,6 +115,29 @@ class Body extends Component {
     window.getSelection().empty();
   }
 
+  highlight_note() {
+
+    let paragraph;
+    console.log(this.state.selection);
+    const name = this.state.selection.paragraph;
+    if(name !== null && name !== undefined) {
+      if (name === 'ltx_abstract') {
+        paragraph = document.getElementsByClassName(name)[0];
+        console.log(paragraph);
+      } else {
+        paragraph = document.getElementById(name);
+      }
+      paragraph = paragraph.getElementsByTagName('P')[0];
+
+      console.log(paragraph.textContent.substr(this.state.selection.start, this.state.selection.end - this.state.selection.start));
+      this.highlight_note_helper(name, paragraph.textContent.substr(this.state.selection.start, this.state.selection.end - this.state.selection.start));
+    }
+  }
+
+  highlight_note_helper(para_name, string) {
+
+  }
+
   getAnchorPosition(selection) {
     let curr = selection.anchorNode;
     let len = selection.anchorOffset;
@@ -153,10 +178,10 @@ class Body extends Component {
     document.addEventListener('mouseup', (event) => {
       if (isNav4Min) {
         const selection = document.getSelection();
-        if (selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+        if (selection.anchorNode.parentNode.closest('p') && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
           const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
           const name = paragraph.id || paragraph.className;
-          document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height +'px';
+          document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height - 10 + 'px';
           const anchor = this.getAnchorPosition(selection);
           const focus = this.getFocusPosition(selection);
           const start = Math.min(anchor, focus);
@@ -169,10 +194,20 @@ class Body extends Component {
               end: end,
             },
           });
+          if(document.getElementsByClassName('nonactive')[0]) {
+            const a = document.getElementsByClassName('nonactive')[0];
+            a.classList.remove('nonactive');
+            a.classList.add('yesactive');
+          }
         } else {
           this.setState({
             selected: false,
           });
+          if(document.getElementsByClassName('yesactive')[0]) {
+            const a = document.getElementsByClassName('yesactive')[0];
+            a.classList.remove('yesactive');
+            a.classList.add('nonactive');
+          }
         }
       } else if (isIE4Min) {
         if (document.selection) {
@@ -226,7 +261,7 @@ class Body extends Component {
       selection.style.top=84;
       selection.style.left='50%';
       paperdiv.insertBefore(selection, paperdiv.childNodes[0]);
-      ReactDOM.render(<button onClick={this.highlight}>highlight</button>, document.getElementById('selectionBox'));
+      ReactDOM.render(<SelectionBox onClickLeft={this.highlight_note} onClickRight={this.highlight}></SelectionBox>, document.getElementById('selectionBox'));
     };
 
     /* Add onClickListener to figures and equations. */
@@ -473,47 +508,47 @@ class Body extends Component {
     return len;
   }
 
-  componentDidMount() {
-    const isNav4 = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) === 4);
-    const isNav4Min = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) >= 4);
-    const isIE4Min = (navigator.appName.indexOf("Microsoft") !== -1 && parseInt(navigator.appVersion) >= 4);
-
-    /*
-    document.addEventListener('mouseup', (event) => {
-      if (isNav4Min) {
-        const selection = document.getSelection();
-        if (selection.anchorNode.parentNode.closest('p') !== null && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
-          const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
-          const name = paragraph.id || paragraph.className;
-          document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height +'px';
-          const anchor = this.getAnchorPosition(selection);
-          const focus = this.getFocusPosition(selection);
-          const start = Math.min(anchor, focus);
-          const end = Math.max(anchor, focus);
-          this.setState({
-            selected: true,
-            selection: {
-              paragraph: name,
-              start: start,
-              end: end,
-            },
-          });
-          console.log(this.state.selected);
-        } else {
-          this.setState({
-            selected: false,
-          });
-        }
-      } else if (isIE4Min) {
-        if (document.selection) {
-
-          event.cancelBubble = true;
-        }
-      }
-      event.stopPropagation();
-    });
-    */
-  }
+  // componentDidMount() {
+  //   const isNav4 = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) === 4);
+  //   const isNav4Min = (navigator.appName === "Netscape" && parseInt(navigator.appVersion) >= 4);
+  //   const isIE4Min = (navigator.appName.indexOf("Microsoft") !== -1 && parseInt(navigator.appVersion) >= 4);
+  //
+  //   /*
+  //   document.addEventListener('mouseup', (event) => {
+  //     if (isNav4Min) {
+  //       const selection = document.getSelection();
+  //       if (selection.anchorNode.parentNode.closest('p') !== null && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+  //         const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
+  //         const name = paragraph.id || paragraph.className;
+  //         document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height +'px';
+  //         const anchor = this.getAnchorPosition(selection);
+  //         const focus = this.getFocusPosition(selection);
+  //         const start = Math.min(anchor, focus);
+  //         const end = Math.max(anchor, focus);
+  //         this.setState({
+  //           selected: true,
+  //           selection: {
+  //             paragraph: name,
+  //             start: start,
+  //             end: end,
+  //           },
+  //         });
+  //         console.log(this.state.selected);
+  //       } else {
+  //         this.setState({
+  //           selected: false,
+  //         });
+  //       }
+  //     } else if (isIE4Min) {
+  //       if (document.selection) {
+  //
+  //         event.cancelBubble = true;
+  //       }
+  //     }
+  //     event.stopPropagation();
+  //   });
+  //   */
+  // }
 
   changeSearchMode() {
     this.setState(prevState => {

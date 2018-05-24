@@ -1,15 +1,35 @@
 import React, { Component } from 'react';
 import Plane from 'react-icons/lib/fa/paper-plane';
+import { withCookies } from 'react-cookie';
 
 import NavBarItem from './NavBarItem';
 
-export default class NavBar extends Component {
+class NavBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userID: '',
+    }
+    this.logout = this.logout.bind(this);
+  }
+  componentWillMount() {
+    const { cookies } = this.props;
+    const _id = cookies.get('_id');
+    this.setState({userID: _id});
+  }
+  logout() {
+    const { cookies } = this.props;
+    cookies.remove('_id', { path: '/' });
+  }
   render() {
     return (
       <div style={styles.navBarStyle}>
         <div style={styles.containerStyle}>
-          <NavBarItem title to="/"><Plane/>&nbsp;PAPERPLANE</NavBarItem>
-          <NavBarItem to="/hi2">Title3</NavBarItem>
+          <NavBarItem title to={this.state.userID ? '/home' : '/'}><Plane/>&nbsp;PAPERPLANE</NavBarItem>
+          <div onClick={this.logout}>
+            <NavBarItem to="/">LOGOUT</NavBarItem>
+          </div>
+          <NavBarItem to="/home">Title3</NavBarItem>
           <NavBarItem to="/hi1">Title2</NavBarItem>
           <NavBarItem to="/profile">My Profile</NavBarItem>
           <div style={{ clear:'both' }} />
@@ -32,3 +52,5 @@ const styles = {
     padding: '16px 0'
   },
 };
+
+export default withCookies(NavBar);

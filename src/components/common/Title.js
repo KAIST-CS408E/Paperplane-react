@@ -24,7 +24,7 @@ class Title extends Component {
         <div style={styles.titleStyle}
              onMouseEnter={this.handleMouseHover}
              onMouseLeave={this.handleMouseHover}>
-          <div style={{width: '25vw'}}>{title}</div>
+          <div style={styles.textStyle}>{title}</div>
           {
             isHovering ? (
                 <div style={{display: 'flex'}}>
@@ -40,12 +40,11 @@ class Title extends Component {
 
 const styles = {
   textStyle: {
-    fontSize: '1rem',
+    fontSize: '1.5rem',
     overflow: 'auto',
     width: '25vw',
   },
   titleStyle: {
-    fontSize: '1.8rem',
     fontWeight: 'bold',
     overflow: 'auto',
     display: 'flex',

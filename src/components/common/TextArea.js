@@ -40,7 +40,7 @@ const styles = {
   textArea: {
     border: '1px solid #efefef',
     padding: '0.8rem',
-    fontSize: '1.2rem',
+    fontSize: '1rem',
     fontWeight: 400,
     lineHeight: '160%',
     display: 'block',

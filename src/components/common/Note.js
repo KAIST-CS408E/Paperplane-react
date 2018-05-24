@@ -22,13 +22,16 @@ class Note extends Component {
       editMode: false,
     };
 
-    this.handleMouseHover = this.handleMouseHover.bind(this);
+    this.handleMouseOn = this.handleMouseOn.bind(this);
+    this.handleMouseOff = this.handleMouseOff.bind(this);
     this.saveNote = debounce(this.saveNote, 1000);
     this.deleteNote = this.deleteNote.bind(this);
   }
 
   componentWillMount() {
-    const { noteId, title, content } = this.props;
+    const { noteId, title, content, key } = this.props;
+    console.log('print key');
+    console.log(key);
     this.setState({ noteId, title, content });
   }
 
@@ -40,9 +43,19 @@ class Note extends Component {
     popUpModalOnClick(document, this.props.paper, this.props.showModal);
   }
 
-  handleMouseHover() {
+  componentWillUnmount() {
+    console.log('unmount')
+    console.log(this.props.noteId);
+  }
+
+  handleMouseOn() {
     this.setState(prevState => {
-      return {isHovering: !prevState.isHovering}
+      return {isHovering: true}
+    });
+  }
+  handleMouseOff() {
+    this.setState(prevState => {
+      return {isHovering: false}
     });
   }
 
@@ -80,6 +93,8 @@ class Note extends Component {
 
   deleteNote(e) {
     const url = `${NOTE_URL}/${this.props.noteId}`;
+
+    this.setState({isHovering: false});
     this.props.deleteNote();
     axios.delete(url)
       .then((res) => {
@@ -118,11 +133,12 @@ class Note extends Component {
     const trigger = this.state.mode === 'read' ?
         (
 
-          <header className="card-header"
-                  onMouseEnter={this.handleMouseHover}
-                  onMouseLeave={this.handleMouseHover}
+          <header key={this.props.noteId}
+                  className="card-header"
+                  onMouseEnter={this.handleMouseOn}
+                  onMouseLeave={this.handleMouseOff}
                   style={styles.noteTitleStyle}>
-            <p className="card-header-title">
+            <p style={styles.titleTextStyle} className="card-header-title">
               {this.state.title || "No Title"}
               {this.state.isHovering ? <Pencil style={styles.iconStyle} onClick={(e) => this.changeTitleMode(e)}/> : null}
             </p>
@@ -142,11 +158,11 @@ class Note extends Component {
     return (
       <Collapsible trigger={trigger} transitionTime={100}>
         {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
-        <div class="card-content">
+        <div styles={styles.contentTextStyle} class="card-content">
           {
             this.state.editMode ?
                 <TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} /> :
-                <div style={{marginBottom: '0', fontSize: '1.3rem'}} class="content" dangerouslySetInnerHTML={{__html: content}} />
+                <div style={{marginBottom: '0', fontSize: '1.2rem'}} class="content" dangerouslySetInnerHTML={{__html: content}} />
           }
             {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
           <a style={styles.actionStyle} onClick={() => this.setState(prevState => {return {editMode: !prevState.editMode}})}>
@@ -159,16 +175,11 @@ class Note extends Component {
 }
 
 const styles = {
-  textStyle: {
-    flex: 1,
-    height: '30px',
-    fontSize: '1.5rem',
-    fontStyle: 'bold',
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    backgroundColor: 'white',
-    paddingLeft: '10px',
+  titleTextStyle: {
+    fontSize: '1.2rem',
+  },
+  contentTextStyle: {
+    fontSize: '1rem',
   },
   titleTextArea: {
     borderWidth: '0px',

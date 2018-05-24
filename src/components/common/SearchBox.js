@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import SearchIcon from 'react-icons/lib/fa/search';
 import BackIcon from 'react-icons/lib/md/keyboard-arrow-left';
+import DownIcon from 'react-icons/lib/io/android-arrow-dropdown';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -56,21 +57,34 @@ class SearchBox extends Component {
           <div style={styles.textStyle}>Search</div>
           <div style={styles.iconStyle}/>
         </div>
-        {/*<input style={styles.inputStyle} type='text' placeholder={'Check what others think!'} value={this.state.query} onChange={e => this.setState({query: e.target.value})} />*/}
-        <div style={{display: 'flex', justifyContent: 'space-between',width: '100%'}}>
-        <div style={{width: '80px'}} class={openDropdown ? "dropdown is-active" : "dropdown"}>
-          <div style={{width: '80px'}} onClick={() => this.setState(prevState => {return {openDropdown: !prevState.openDropdown}})} class="dropdown-trigger">
-            <button style={{width: '80px', borderBottomRightRadius: 0, borderTopRightRadius: 0, zIndex: 100}} class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-              <span style={{overflow: 'hidden'}}>{activeIndex > 0 ? `${activeIndex}. ${sectionList[activeIndex - 1].name}` : 'All Sections'}</span>
-            </button>
-          </div>
-          <div class="dropdown-menu" id="dropdown-menu" role="menu">
-            <div class="dropdown-content">
-              {dropdownItems}
+        <div style={{display: 'flex', flexDirection: 'column',justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginTop: '10px'}}>
+            <div style={{fontWeight: '600'}}>Sections</div>
+            <div style={{width: '100%'}} class={openDropdown ? "dropdown is-active" : "dropdown"}>
+              <div style={{width: '100%'}} onClick={() => this.setState(prevState => {return {openDropdown: !prevState.openDropdown}})} class="dropdown-trigger">
+                  <button style={{width: '100%', zIndex: 100}} class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span style={{overflow: 'hidden', textAlign: 'left', width: '100%'}}>{activeIndex > 0 ? `${activeIndex}. ${sectionList[activeIndex - 1].name}` : 'All Sections'}</span>
+                    <DownIcon />
+                  </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  {dropdownItems}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <input style={{width: '320px',borderBottomLeftRadius: 0, borderTopLeftRadius: 0}} class="input" type="search" placeholder="Search What Others Think.." />
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginTop: '10px'}}>
+            <div style={{fontWeight: '600'}}>Keywords</div>
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input style={{width: '100%'}} class="input" type="search" placeholder="Search What Others Think.." />
+              </div>
+              <div class="control">
+                <a class="button is-info">Search</a>
+              </div>
+            </div>
+            </div>
         </div>
 
         {/*<img style={styles.iconStyle} src={searchIconPath} onClick={() => this.props.searchNotes(this.state.query)}/>*/}
@@ -83,6 +97,11 @@ const styles = {
   contentStyle: {
     width: '100%',
     backgroundColor: '#ffffff',
+    height: '20vh',
+
+    '-webkit-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
+    '-moz-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
+    'box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
   },
   inputStyle: {
     width: '93%',

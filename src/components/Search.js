@@ -12,7 +12,8 @@ class Search extends Component {
       notes: [],
       paperID: '',
       userID: '',
-    }
+      query: '',
+    };
     this.searchNotes = this.searchNotes.bind(this);
   }
   componentWillMount() {
@@ -54,7 +55,7 @@ class Search extends Component {
   render() {
     return (
       <div>
-        <SearchBox sectionList={this.props.sectionList} searchNotes={this.searchNotes} searchSection={this.props.searchSection || 0} changeMode={this.props.changeSearchMode} />
+        <SearchBox query={this.state.query} sectionList={this.props.sectionList} searchNotes={this.searchNotes} searchSection={this.props.searchSection || 0} changeMode={this.props.changeSearchMode} />
         <SearchResult notes={this.state.notes} paper={this.props.paper} pinNote={this.props.pinNote}/>
       </div>
     )

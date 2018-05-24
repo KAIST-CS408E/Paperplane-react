@@ -43,11 +43,6 @@ class Note extends Component {
     popUpModalOnClick(document, this.props.paper, this.props.showModal);
   }
 
-  componentWillUnmount() {
-    console.log('unmount')
-    console.log(this.props.noteId);
-  }
-
   handleMouseOn() {
     this.setState(prevState => {
       return {isHovering: true}

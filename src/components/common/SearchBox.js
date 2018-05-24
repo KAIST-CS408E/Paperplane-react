@@ -8,11 +8,12 @@ class SearchBox extends Component {
     super(props);
     this.state = {
       query: '',
-      sections: ['1. dsa', 's2', 's3'],
+      sections: [],
       activeIndex: 0,
       openDropdown: false,
     };
     this.renderDropdownItems = this.renderDropdownItems.bind(this);
+    this.searchSubmit = this.searchSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -40,6 +41,12 @@ class SearchBox extends Component {
       )
     });
     return items;
+  }
+
+  searchSubmit(e) {
+    e && e.preventDefault();
+    const { query, activeIndex } = this.state;
+    this.props.searchNotes(query, activeIndex);
   }
 
   render() {
@@ -76,14 +83,22 @@ class SearchBox extends Component {
           </div>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginTop: '10px'}}>
             <div style={{fontWeight: '600'}}>Keywords</div>
+            <form onSubmit={e => this.searchSubmit(e)}>
             <div class="field has-addons">
               <div class="control is-expanded">
-                <input style={{width: '100%'}} class="input" type="search" placeholder="Search What Others Think.." />
+                <input style={{width: '100%'}}
+                       class="input"
+                       type="search"
+                       placeholder="Search What Others Think.."
+                       value={this.state.query}
+                       onChange={event => this.setState({ query: event.target.value })}
+                />
               </div>
               <div class="control">
-                <a class="button is-info">Search</a>
+                <a class="button is-info" onClick={this.searchSubmit}>Search</a>
               </div>
             </div>
+            </form>
             </div>
         </div>
 

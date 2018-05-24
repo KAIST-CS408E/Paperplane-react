@@ -43,7 +43,7 @@ class Profile extends Component {
         <h2 className="title is-2" style={styles.profileTitleStyle}>My Notes</h2>
         <div className="content">
           <ul style={styles.paperListStyle}>
-            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}`} key={paper._id}>{paper.title}</Link></li>)}
+            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}/${this.state.uid}`} key={paper._id}>{paper.title}</Link></li>)}
           </ul>
         </div>
       </div>

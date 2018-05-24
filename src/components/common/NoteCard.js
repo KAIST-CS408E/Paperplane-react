@@ -3,11 +3,13 @@ import { NavLink } from 'react-router-dom';
 
 class NoteCard extends Component {
   render() {
+    console.log(this.props);
     const { containerStyle, titleStyle, buttonStyle } = styles;
+    console.log(this.props.user);
     return (
-      <NavLink to={`hi2/${this.props.id}`}>
+      <NavLink to={`/summary/${this.props.paperId}/${this.props.user.uid}`}>
         <div style={containerStyle}>
-          <h1 style={titleStyle}>{this.props.id}'s note</h1>
+          <h1 style={titleStyle}>{this.props.user.name}'s note</h1>
           <div>
             <h2 style={{display: 'inline', color: '#444444'}}>32 votes&nbsp;&nbsp;&nbsp;&nbsp;</h2>
             <h2 style={{display: 'inline', color: '#444444'}}>1232 views</h2>

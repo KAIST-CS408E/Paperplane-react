@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import axios from 'axios';
 import { BASE_URL } from '../constants';
+import SummaryListItemCard from './common/SummaryListItemCard';
 
 
 class Profile extends Component {
@@ -41,11 +41,7 @@ class Profile extends Component {
     return (
       <div style={styles.profileContainerStyle}>
         <h2 className="title is-2" style={styles.profileTitleStyle}>My Notes</h2>
-        <div className="content">
-          <ul style={styles.paperListStyle}>
-            {this.state.papers.map(paper => <li><Link to={`/summary/${paper._id}/${this.state.uid}`} key={paper._id}>{paper.title}</Link></li>)}
-          </ul>
-        </div>
+        {this.state.papers.map(paper => <SummaryListItemCard uid={this.state.uid} paperId={paper._id} paperTitle={paper.title} />)}
       </div>
     );
   }
@@ -60,9 +56,6 @@ const styles = {
   profileTitleStyle: {
     textAlign: 'center',
     marginBottom: '40px',
-  },
-  paperListStyle: {
-    fontSize: '20px',
   },
 };
 

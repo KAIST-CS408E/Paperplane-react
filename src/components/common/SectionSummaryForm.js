@@ -42,12 +42,13 @@ class SectionSummaryForm extends Component {
             ? <span style={styles.submittedTextStyle}>Summary submitted! You can check your summary at the right.</span>
             : (
               <div>
-                <div className="card-content" style={styles.textAreaStyle}>
+                <div className="card-content" style={styles.summaryFormStyle}>
+                  <h4 className="title is-4" style={styles.summaryFormTitleStyle}>Section Summary</h4>
                   <textarea ref={elem => this.summaryInput = elem} className="textarea"
                             placeholder="How about leaving a short summary for the previous section?" />
                 </div>
                 <div style={styles.buttonGroupStyle}>
-                  <button className={`button is-primary${this.state.isLoading ? ' is-loading' : ''}`}
+                  <button className={`button is-info${this.state.isLoading ? ' is-loading' : ''}`}
                           style={styles.buttonStyle} onClick={this.createSummaryNote}>
                     Submit!
                   </button>
@@ -63,16 +64,21 @@ class SectionSummaryForm extends Component {
 
 const styles = {
   sectionSummaryFormStyle: {
-    margin: '100px 0 200px 0',
-    height: '201px',
+    margin: '60px 0 80px 0',
+    // height: '201px',
     lineHeight: '201px',
     textAlign: 'center',
   },
   submittedTextStyle: {
     verticalAlign: 'middle',
   },
-  textAreaStyle: {
+  summaryFormStyle: {
     padding: '15px',
+  },
+  summaryFormTitleStyle: {
+    margin: '0 0 15px',
+    fontFamily: 'BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
+    fontStyle: 'normal',
   },
   buttonGroupStyle: {
     display: 'block',

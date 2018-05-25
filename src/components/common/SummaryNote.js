@@ -4,10 +4,10 @@ import { contentEmbededHTML } from '../../utils';
 
 class SummaryNote extends Component {
   render() {
-    const { note, contents } = this.props;
-    const { isSummary } = note;
+    const { note, contents, isSummary } = this.props;
+    const noteTag = <div dangerouslySetInnerHTML={{ __html: contentEmbededHTML(note.content) }} />
     return (
-      <div style={{ ...styles.noteSummaryStyle, width: '100%'/*isSummary ? '100%' : '50%'*/ }}>
+      <div className="content" style={{ ...styles.noteSummaryStyle, width: '100%' }}>
         {
           contents.length === 0 ? null
             : contents.map(content => (
@@ -17,7 +17,11 @@ class SummaryNote extends Component {
             ))
         }
         <h4 className="title is-4" style={styles.noteTitleStyle}>{note.title || 'No title'}</h4>
-        <div dangerouslySetInnerHTML={{ __html: contentEmbededHTML(note.content) }} />
+        {
+          isSummary
+            ? <blockquote>{noteTag}</blockquote>
+            : noteTag
+        }
       </div>
     );
   }

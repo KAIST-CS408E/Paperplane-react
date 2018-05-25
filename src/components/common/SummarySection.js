@@ -68,7 +68,7 @@ class SummarySection extends Component {
     const { section, notes } = this.props;
     const { summary } = this.state;
     const sectionNoteList = !notes ? null : notes.map(note => <SummaryNote note={note} contents={this.getContents(note)} key={note._id} />);
-    const sectionSummary = !summary ? null : <SummaryNote note={summary} contents={this.getContents(summary)} />;
+    const sectionSummary = !summary ? null : <SummaryNote note={summary} contents={this.getContents(summary)} isSummary={true} />;
     return (
       <div style={styles.sectionSummaryContainerStyle}>
         <h3 className="title is-3">{`${section.number}. ${section.name}`}</h3>

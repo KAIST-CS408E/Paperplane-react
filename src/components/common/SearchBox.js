@@ -64,8 +64,8 @@ class SearchBox extends Component {
           <div style={styles.textStyle}>Search</div>
           <div style={styles.iconStyle}/>
         </div>
-        <div style={{display: 'flex', flexDirection: 'column',justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginTop: '10px'}}>
+        <div style={{backgroundColor: '#ffffff', display: 'flex', flexDirection: 'column',justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px 0'}}>
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginBottom: '10px'}}>
             <div style={{fontWeight: '600'}}>Sections</div>
             <div style={{width: '100%'}} class={openDropdown ? "dropdown is-active" : "dropdown"}>
               <div style={{width: '100%'}} onClick={() => this.setState(prevState => {return {openDropdown: !prevState.openDropdown}})} class="dropdown-trigger">
@@ -81,7 +81,7 @@ class SearchBox extends Component {
               </div>
             </div>
           </div>
-          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%', marginTop: '10px'}}>
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '95%'}}>
             <div style={{fontWeight: '600'}}>Keywords</div>
             <form onSubmit={e => this.searchSubmit(e)}>
             <div class="field has-addons">
@@ -111,9 +111,6 @@ class SearchBox extends Component {
 const styles = {
   contentStyle: {
     width: '100%',
-    backgroundColor: '#ffffff',
-    height: '20vh',
-
     '-webkit-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
     '-moz-box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',
     'box-shadow': '0 1px 2px rgba(10, 10, 10, 0.1)',

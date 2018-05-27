@@ -651,6 +651,7 @@ const styles = {
   rightStyle: {
     width: '400px',
     backgroundColor: '#efefef',
+    overflowY: 'scroll',
   },
   paperStyle: {
     flex: 1,

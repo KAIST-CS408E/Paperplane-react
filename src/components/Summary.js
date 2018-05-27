@@ -31,7 +31,7 @@ class Summary extends Component {
 
     axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
       .then((res) => {
-        const result = res.data[0][0];
+        const result = res.data[Object.keys(res.data)[0]][0];
         this.setState({
           id : result.createdUserId,
           nickname : result.createdUserName,

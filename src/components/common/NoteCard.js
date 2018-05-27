@@ -10,10 +10,6 @@ class NoteCard extends Component {
       <NavLink to={`/summary/${this.props.paperId}/${this.props.user.uid}`}>
         <div style={containerStyle}>
           <h1 style={titleStyle}>{this.props.user.name}'s note</h1>
-          <div>
-            <h2 style={{display: 'inline', color: '#444444'}}>32 votes&nbsp;&nbsp;&nbsp;&nbsp;</h2>
-            <h2 style={{display: 'inline', color: '#444444'}}>1232 views</h2>
-          </div>
         </div>
       </NavLink>
     );
@@ -29,7 +25,7 @@ const styles = {
     borderRadius: 4,
     border: '1px solid #EEEEEE',
     boxShadow: '1px 1px #CCCCCC',
-    padding: '10px 20px',
+    padding: '10px 30px',
     textAlign: 'left',
     position: 'relative',
     marginTop: 24,

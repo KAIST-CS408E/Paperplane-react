@@ -22,6 +22,12 @@ const RECOMMEND = [
     content: 'test recommend content',
     wasShown: false,
   },
+  {
+    section: 1,
+    title: 'Contributions',
+    content: 'When reading introduction, try to find the contribution of this paper and leave notes about them!',
+    wasShown: false,
+  },
 ];
 
 
@@ -97,24 +103,6 @@ class Body extends Component {
     }
   }
 
-  highlight() {
-    let paragraph;
-    console.log(this.state.selection);
-    const name = this.state.selection.paragraph;
-    if(name !== null && name !== undefined) {
-      if (name === 'ltx_abstract') {
-        paragraph = document.getElementsByClassName(name)[0];
-        console.log(paragraph);
-      } else {
-        paragraph = document.getElementById(name);
-      }
-      paragraph = paragraph.getElementsByTagName('P')[0];
-
-      this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
-    }
-    window.getSelection().empty();
-  }
-
   highlight_note() {
 
     let paragraph;
@@ -180,7 +168,8 @@ class Body extends Component {
     document.addEventListener('mouseup', (event) => {
       if (isNav4Min) {
         const selection = document.getSelection();
-        if (selection.anchorNode.parentNode.closest('p') && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+        console.log(selection);
+        if (selection && selection.anchorNode && selection.anchorNode.parentNode.closest('p') && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
           const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
           const name = paragraph.id || paragraph.className;
           document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height - 10 + 'px';
@@ -245,6 +234,26 @@ class Body extends Component {
       .then(res => res.data)
       .catch(alert);
     this.setState({ notes });
+
+    axios.get(`${BASE_URL}highlights?uid=${_id}&paperId=${paper._id}`)
+      .then((res) => {
+        const highlight_list = res.data;
+        highlight_list.map(e => {
+          let paragraph;
+          const name = e.paragraph;
+          if(name !== null && name !== undefined) {
+            if (name === 'ltx_abstract') {
+              paragraph = document.getElementsByClassName(name)[0];
+            } else {
+              paragraph = document.getElementById(name);
+            }
+            paragraph = paragraph.getElementsByTagName('P')[0];
+
+            this.highlight_helper(paragraph, e.start, e.end);
+          }
+        });
+      })
+      .catch(alert);
 
     /* Now ready to render section summary form into the paper. */
     this.setState({ notesLoaded: true });
@@ -476,6 +485,10 @@ class Body extends Component {
 
       this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
     }
+    axios.post(`${BASE_URL}highlights`, { uid: this.state._id, paperId: this.state._paperID, paragraph: name, start: this.state.selection.start, end: this.state.selection.end })
+      .then(res => console.log(res.data))
+      .catch(alert);
+    console.log(this.state._paperID, this.state._id);
     window.getSelection().empty();
   }
 

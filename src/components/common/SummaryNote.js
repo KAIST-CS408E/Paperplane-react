@@ -4,7 +4,7 @@ import { contentEmbededHTML } from '../../utils';
 
 class SummaryNote extends Component {
   render() {
-    const { note, contents, isSummary } = this.props;
+    const { note, contents, isSummary, quote } = this.props;
     const noteTag = <div dangerouslySetInnerHTML={{ __html: contentEmbededHTML(note.content) }} />
     return (
       <div className="content" style={{ ...styles.noteSummaryStyle, width: '100%' }}>
@@ -29,7 +29,12 @@ class SummaryNote extends Component {
                   <div className="message-body" style={styles.noteTextStyle}>{noteTag}</div>
                 </article>
               )
-              : noteTag
+              : (
+                  <div>
+                    {quote ? <blockquote>{quote}</blockquote> : null}
+                    {noteTag}
+                  </div>
+                )
           }
         </div>
       </div>

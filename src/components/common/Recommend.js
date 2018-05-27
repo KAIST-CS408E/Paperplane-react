@@ -27,7 +27,7 @@ class Recommend extends Component {
 const styles = {
   modalBackgroundStyle: {
     width: 'calc(100vw - 400px)',
-    height: '150px',
+    height: '180px',
     top: '80%'
   },
   modalStyle: {

@@ -29,7 +29,7 @@ class Search extends Component {
     const { cookies, paperID } = this.props;
     const userID = cookies.get('_id');
 
-    const url = NOTE_URL + `?uid=${userID}&paperId=${paperID}`  + (query ? `&query=${query}`: '') + (section ? `&section=${section}`: '');
+    const url = NOTE_URL + `?paperId=${paperID}`  + (query ? `&query=${query}`: '') + (section ? `&section=${section}`: '');
     console.log(url);
     let notes = [];
 

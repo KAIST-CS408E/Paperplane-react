@@ -10,20 +10,27 @@ class Title extends Component {
       isHovering: false,
     }
 
-    this.handleMouseHover = this.handleMouseHover.bind(this);
+    this.handleMouseOn = this.handleMouseOn.bind(this);
+    this.handleMouseOff = this.handleMouseOff.bind(this);
   }
-  handleMouseHover() {
+  handleMouseOn() {
     this.setState(prevState => {
-      return {isHovering: !prevState.isHovering}
+      return {isHovering: true}
     });
   }
+  handleMouseOff() {
+    this.setState(prevState => {
+      return {isHovering: false}
+    });
+  }
+
   render() {
     const title = `${this.props.index}. ${this.props.title}`;
     const { isHovering } = this.state;
     return (
         <div style={styles.titleStyle}
-             onMouseEnter={this.handleMouseHover}
-             onMouseLeave={this.handleMouseHover}>
+             onMouseEnter={this.handleMouseOn}
+             onMouseLeave={this.handleMouseOff}>
           <div style={styles.textStyle}>{title}</div>
           {
             isHovering ? (

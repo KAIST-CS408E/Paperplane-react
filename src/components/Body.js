@@ -406,7 +406,7 @@ class Body extends Component {
     /* TODO: add a new note. */
     const currentRec = this.state.recommend;
     const { section, title, content } = currentRec;
-    this.addNote(section - 1, title, content);
+    this.addNote(section - 1, title);
     this.setState({
       recommend: null,
     });

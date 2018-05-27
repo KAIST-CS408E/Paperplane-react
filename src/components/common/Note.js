@@ -72,8 +72,8 @@ class Note extends Component {
   saveNote() {
     console.log('debounced!');
     const url = `${NOTE_URL}/${this.props.noteId}`;
-    const { title, content } = this.state;
-    const data = { title, content };
+    const { title, content, quote } = this.state;
+    const data = { title, content, quote };
     console.log(this.props.noteId);
     if (this.props.noteId) {
       axios.put(url, data)

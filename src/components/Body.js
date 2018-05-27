@@ -135,7 +135,11 @@ class Body extends Component {
   }
 
   highlight_note_helper(para_name, string) {
-
+    console.log(para_name);
+    console.log(string);
+    let section = parseInt(para_name.split('.')[0].substring(1));
+    if (section)
+      this.addNote(section - 1, `Notes about section ${section}`, string);
   }
 
   getAnchorPosition(selection) {

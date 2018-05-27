@@ -29,7 +29,7 @@ class DraggableModal extends Component {
 
       this.addEventListener('mousemove', repositionElement);
 
-      window.addEventListener('mouseup', function() {
+      contextmenu.addEventListener('mouseup', function() {
         contextmenu.removeEventListener('mousemove', repositionElement);
       });
 
@@ -78,7 +78,7 @@ const styles = {
     left: '100px',
     width: '40vw',
     height: '25vh',
-
+    zIndex: '1000',
     borderTopLeftRadius: '6px',
     borderTopRightRadius: '6px',
 

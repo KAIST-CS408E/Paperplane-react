@@ -97,24 +97,6 @@ class Body extends Component {
     }
   }
 
-  highlight() {
-    let paragraph;
-    console.log(this.state.selection);
-    const name = this.state.selection.paragraph;
-    if(name !== null && name !== undefined) {
-      if (name === 'ltx_abstract') {
-        paragraph = document.getElementsByClassName(name)[0];
-        console.log(paragraph);
-      } else {
-        paragraph = document.getElementById(name);
-      }
-      paragraph = paragraph.getElementsByTagName('P')[0];
-
-      this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
-    }
-    window.getSelection().empty();
-  }
-
   highlight_note() {
 
     let paragraph;
@@ -247,8 +229,24 @@ class Body extends Component {
       .catch(alert);
     this.setState({ notes });
 
-    axios.get(`${BASE_URL}api/highlights?uid=${_id}&paperId=${paper._id}`)
-      .then(res => console.log(res.data))
+    axios.get(`${BASE_URL}highlights?uid=${_id}&paperId=${paper._id}`)
+      .then((res) => {
+        const highlight_list = res.data;
+        highlight_list.map(e => {
+          let paragraph;
+          const name = e.paragraph;
+          if(name !== null && name !== undefined) {
+            if (name === 'ltx_abstract') {
+              paragraph = document.getElementsByClassName(name)[0];
+            } else {
+              paragraph = document.getElementById(name);
+            }
+            paragraph = paragraph.getElementsByTagName('P')[0];
+
+            this.highlight_helper(paragraph, e.start, e.end);
+          }
+        });
+      })
       .catch(alert);
 
     /* Now ready to render section summary form into the paper. */
@@ -480,6 +478,10 @@ class Body extends Component {
 
       this.highlight_helper(paragraph, this.state.selection.start, this.state.selection.end);
     }
+    axios.post(`${BASE_URL}highlights`, { uid: this.state._id, paperId: this.state._paperID, paragraph: name, start: this.state.selection.start, end: this.state.selection.end })
+      .then(res => console.log(res.data))
+      .catch(alert);
+    console.log(this.state._paperID, this.state._id);
     window.getSelection().empty();
   }
 

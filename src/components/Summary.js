@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withCookies } from 'react-cookie';
 import axios from 'axios';
 import { BASE_URL } from '../constants';
 import SummarySection from './common/SummarySection';
@@ -24,41 +23,26 @@ class Summary extends Component {
   }
 
   componentWillMount = () => {
-    const { cookies } = this.props;
-    const uid = cookies.get('_id');
-    const id = cookies.get('id');
-    const nickname = cookies.get('nickname');
-    const { paperId } = this.props.match.params;
-    // this.setState({
-    //   uid,
-    //   paperId,
-    //   id,
-    //   nickname,
-    // });
-
-    // if(this.props.match.params.userId !== uid) {
-    //   axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
-    // }
+    const { match: { params: { paperId, userId: uid } } } = this.props;
+    this.setState({
+      uid,
+      paperId,
+    });
 
     axios.get(`${BASE_URL}notes/?uid=${uid}&paperId=${paperId}`)
       .then((res) => {
         const result = res.data[0][0];
         this.setState({
-          uid : result.createdBy,
-          paperId : paperId,
           id : result.createdUserId,
           nickname : result.createdUserName,
+          notesBySection: res.data,
         });
-        console.log(result);
-        this.setState({ notesBySection: res.data });
-
       })
       .catch(alert);
 
     axios.get(`${BASE_URL}papers/${paperId}`)
       .then((res) => {
         this.setState({ paper: res.data });
-        console.log(this.state);
       })
       .catch(alert);
   };
@@ -124,4 +108,4 @@ const styles = {
   },
 };
 
-export default withCookies(Summary);
+export default Summary;

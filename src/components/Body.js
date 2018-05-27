@@ -643,7 +643,7 @@ class Body extends Component {
                   </div>
               )
           }
-          {this.state.search ? <Search sectionList={this.state.sections} searchSection={this.state.searchSection} paper={this.state.paper} pinNote={this.appendModal} changeSearchMode={this.changeSearchMode} paperID={this.state._paperID}/> : noteComponent}
+          {this.state.search ? <Search sectionList={this.state.sections} searchSection={this.state.searchSection} paper={this.state.paper} pinNote={this.appendModal} changeSearchMode={this.changeSearchMode} paperID={this.state._paperID} showModal={this.showModal}/> : noteComponent}
         </div>
         {modalComponent}
       </div>

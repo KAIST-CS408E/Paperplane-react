@@ -4,6 +4,7 @@ import SearchResult from './SearchResult';
 import {NOTE_URL, PAPER_URL} from "../constants";
 import SearchBox from './common/SearchBox';
 import { withCookies } from 'react-cookie';
+import {popUpModalOnClick} from "../utils";
 
 class Search extends Component {
   constructor(props) {
@@ -16,6 +17,14 @@ class Search extends Component {
     };
     this.searchNotes = this.searchNotes.bind(this);
   }
+  componentDidMount() {
+    popUpModalOnClick(document, this.props.paper, this.props.showModal);
+  }
+
+  componentDidUpdate() {
+    popUpModalOnClick(document, this.props.paper, this.props.showModal);
+  }
+
   componentWillMount() {
     const { cookies, paperID, searchSection } = this.props;
     const userID = cookies.get('_id');

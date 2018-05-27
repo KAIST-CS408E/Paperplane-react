@@ -13,7 +13,7 @@ class SearchResult extends Component{
   }
   renderNotes() {
     const { notes } = this.props;
-    return notes.map((e, i) => <NoteReadOnly key={i * 2500} title={e.title} content={e.content} paper={this.props.paper} quote={e.quote} pinNote={this.pinNote}/>)
+    return notes.map((e, i) => <NoteReadOnly key={e._id} title={e.title} content={e.content} paper={this.props.paper} quote={e.quote} pinNote={this.pinNote}/>)
   }
   render() {
     const notes = this.renderNotes();

@@ -78,9 +78,13 @@ class Summary extends Component {
             <p style={styles.authorStyle}>{`Summary by ${this.state.nickname} (${this.state.id})`}</p>
           </div>
           {
-            paper.sections.map((section) => (
-              <SummarySection paper={paper} section={section} notes={notesBySection[section.number - 1] || []} />
-            ))
+            paper.sections.reduce((summarySections, section) => {
+              if (!(section.number - 1 in notesBySection)) return summarySections;
+              return [
+                ...summarySections,
+                <SummarySection paper={paper} section={section} notes={notesBySection[section.number - 1] || []} />
+              ];
+            }, [])
           }
           <ContentModal content={this.state.modalContent} hideModal={this.hideModal} isSummary={true} />
         </div>

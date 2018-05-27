@@ -17,21 +17,23 @@ class SummaryNote extends Component {
             ))
         }
         <h4 className="title is-4" style={styles.noteTitleStyle}>{note.title || 'No title'}</h4>
-        {
-          isSummary
-            ?
+        <div style={styles.noteTextStyle}>
+          {
+            isSummary
+              ?
               (
-                <article class="message is-link">
-                  <div class="message-header">
+                <article className="message is-link">
+                  <div className="message-header">
                     <strong>Summary</strong>
                   </div>
-                  <div class="message-body">
+                  <div className="message-body">
                     {noteTag}
                   </div>
                 </article>
               )
-            : noteTag
-        }
+              : noteTag
+          }
+        </div>
       </div>
     );
   }
@@ -41,16 +43,23 @@ const styles = {
   noteSummaryStyle: {
     display: 'inline-block',
     wordBreak: 'break-word',
-    padding: '0 3%',
+    padding: '0 5%',
     verticalAlign: 'top',
     marginBottom: '20px',
+    fontFamily: 'Georgia, serif',
   },
   embededContentStyle: {
     padding: '15px',
     margin: '15px 0 30px 0',
+    ':before': ';;;',
   },
   noteTitleStyle: {
-    marginBottom: '5px',
+    fontSize: '1.8rem',
+    fontWeight: '500',
+    marginBottom: '10px',
+  },
+  noteTextStyle: {
+    fontSize: '1.2rem',
   },
 };
 

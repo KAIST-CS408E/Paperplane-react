@@ -100,9 +100,12 @@ const styles = {
   },
   summaryHeaderStyle: {
     marginBottom: '40px',
+    fontFamily: 'Baskerville, Georgia, serif',
   },
   paperTitleStyle: {
     textAlign: 'center',
+    fontSize: '3rem',
+    fontWeight: '500',
   },
   authorStyle: {
     textAlign: 'right',

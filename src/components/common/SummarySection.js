@@ -76,7 +76,7 @@ class SummarySection extends Component {
     const sectionSummary = !summary ? null : <SummaryNote note={summary} contents={this.getContents(summary)} isSummary={true} />;
     return (
       <div style={styles.sectionSummaryContainerStyle}>
-        <h3 className="title is-3" style={styles.sectionTitleStyle}>{`${section.number}. ${section.name}`}</h3>
+        <h3 className="title is-3" style={styles.sectionTitleStyle}>{section.name}</h3>
         <div>
           {sectionNoteList}
           {sectionNoteList && sectionSummary ? <div style={{ height: '30px' }} /> : null }

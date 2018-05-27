@@ -39,13 +39,12 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/register" component={Register} />
-            <Route exact path="/main" component={Body} />
-            <Route exact path="/hi2/:paperId" component={Body} />
-            <Route exact path="/hi3/:paperId" component={NoteList} />
             <Route exact path="/home" component={PaperList} />
+            <Route exact path="/read-paper/:paperId" component={Body} />
+            <Route exact path="/blog-post-on-paper/:paperId" component={NoteList} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/summary/:paperId/:userId" component={Summary} />
-            <Redirect from="/" to="/" />
+            <Redirect from="/" to="/home" />
           </Switch>
           </div>
         </div>

@@ -5,10 +5,10 @@ class PaperCard extends Component {
   render() {
     const { containerStyle, titleStyle, buttonStyle } = styles;
     return (
-      <NavLink to={`hi2/${this.props.id}`}>
+      <NavLink to={`read-paper/${this.props.id}`}>
         <div style={containerStyle}>
           <h1 style={titleStyle}>{this.props.title}</h1>
-          <NavLink to={`hi3/${this.props.id}`}><div style={buttonStyle}>Others' Note</div></NavLink>
+          <NavLink to={`blog-post-on-paper/${this.props.id}`}><div style={buttonStyle}>Others' Note</div></NavLink>
         </div>
       </NavLink>
     );

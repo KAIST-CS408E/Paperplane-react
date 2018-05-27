@@ -182,7 +182,8 @@ class Body extends Component {
     document.addEventListener('mouseup', (event) => {
       if (isNav4Min) {
         const selection = document.getSelection();
-        if (selection.anchorNode.parentNode.closest('p') && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
+        console.log(selection);
+        if (selection && selection.anchorNode && selection.anchorNode.parentNode.closest('p') && selection.anchorNode.parentNode.closest('p') === selection.focusNode.parentNode.closest('p') && selection.focusOffset !== selection.anchorOffset) {
           const paragraph = selection.anchorNode.parentNode.closest('p').closest('div');
           const name = paragraph.id || paragraph.className;
           document.getElementsByClassName('selector')[0].style.top = Math.abs(document.getElementsByClassName('anchor')[0].getBoundingClientRect().top - selection.getRangeAt(0).getBoundingClientRect().top) - document.getElementsByClassName('selector')[0].getBoundingClientRect().height - 10 + 'px';
@@ -247,6 +248,10 @@ class Body extends Component {
       .then(res => res.data)
       .catch(alert);
     this.setState({ notes });
+
+    axios.get(`${BASE_URL}api/highlights?uid=${_id}&paperId=${paper._id}`)
+      .then(res => console.log(res.data))
+      .catch(alert);
 
     /* Now ready to render section summary form into the paper. */
     this.setState({ notesLoaded: true });

@@ -78,16 +78,9 @@ class SummarySection extends Component {
       <div style={styles.sectionSummaryContainerStyle}>
         <h3 className="title is-3">{`${section.number}. ${section.name}`}</h3>
         <div>
-          {notes.length === 0 && !summary
-            ? <span style={styles.noContentWarningStyle}>Nothing to show for this section :(</span>
-            : (
-              <div>
-                {sectionNoteList}
-                {sectionNoteList && sectionSummary ? <div style={{ height: '30px' }} /> : null }
-                {sectionSummary}
-              </div>
-            )
-          }
+          {sectionNoteList}
+          {sectionNoteList && sectionSummary ? <div style={{ height: '30px' }} /> : null }
+          {sectionSummary}
         </div>
       </div>
     );

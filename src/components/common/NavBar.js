@@ -29,9 +29,7 @@ class NavBar extends Component {
           <div onClick={this.logout}>
             <NavBarItem to="/">LOGOUT</NavBarItem>
           </div>
-          <NavBarItem to="/home">Title3</NavBarItem>
-          <NavBarItem to="/hi1">Title2</NavBarItem>
-          <NavBarItem to="/profile">My Profile</NavBarItem>
+          <NavBarItem to="/profile">Profile</NavBarItem>
           <div style={{ clear:'both' }} />
         </div>
       </div>

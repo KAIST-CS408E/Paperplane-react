@@ -100,9 +100,10 @@ class Note extends Component {
 
   }
 
+
   render() {
-    const handleChange = function (event) {
-      const contentEmbededNote = event.target.value;
+    const handleChange = function (event, html) {
+      const contentEmbededNote = html;
       const regex = /<a class="embed-[FE]\d+"((?!>)[\w\W])*>|<\/a>/gi
       const pureTextNote = contentEmbededNote.replace(regex, match => '');
       this.setState({

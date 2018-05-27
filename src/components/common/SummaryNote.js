@@ -16,7 +16,7 @@ class SummaryNote extends Component {
               </div>
             ))
         }
-        <h4 className="title is-4" style={styles.noteTitleStyle}>{note.title || 'No title'}</h4>
+        {isSummary ? null : <h4 className="title is-4" style={styles.noteTitleStyle}>{note.title || 'No title'}</h4>}
         <div style={styles.noteTextStyle}>
           {
             isSummary
@@ -24,11 +24,9 @@ class SummaryNote extends Component {
               (
                 <article className="message is-link">
                   <div className="message-header">
-                    <strong>Summary</strong>
+                    <strong style={{ ...styles.noteTitleStyle, marginBottom: 0, }}>Summary</strong>
                   </div>
-                  <div className="message-body">
-                    {noteTag}
-                  </div>
+                  <div className="message-body" style={styles.noteTextStyle}>{noteTag}</div>
                 </article>
               )
               : noteTag

@@ -22,6 +22,12 @@ const RECOMMEND = [
     content: 'test recommend content',
     wasShown: false,
   },
+  {
+    section: 1,
+    title: 'Contributions',
+    content: 'When reading introduction, try to find the contribution of this paper and leave notes about them!',
+    wasShown: false,
+  },
 ];
 
 

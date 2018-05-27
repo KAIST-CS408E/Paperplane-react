@@ -598,7 +598,6 @@ class Body extends Component {
         }
       }
     }
-    console.log(ex);
     return noteComponent;
   }
   render() {

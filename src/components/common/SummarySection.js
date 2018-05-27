@@ -7,6 +7,7 @@ class SummarySection extends Component {
     super(props);
 
     this.state = {
+      notes: [],
       summary: null,
     };
   }
@@ -14,8 +15,12 @@ class SummarySection extends Component {
   componentWillMount() {
     const { notes } = this.props;
     /* TODO: there can be more than one summary. Needs proper handling. */
+    const pureNotes = notes.filter(note => !note.isSummary);
     const summary = notes.filter(note => note.isSummary)[0];
-    this.setState({ summary });
+    this.setState({
+      notes: pureNotes,
+      summary,
+    });
   }
 
   componentWillUpdate() {
@@ -65,8 +70,8 @@ class SummarySection extends Component {
   };
 
   render() {
-    const { section, notes } = this.props;
-    const { summary } = this.state;
+    const { section } = this.props;
+    const { notes, summary } = this.state;
     const sectionNoteList = !notes ? null : notes.map(note => <SummaryNote note={note} contents={this.getContents(note)} key={note._id} />);
     const sectionSummary = !summary ? null : <SummaryNote note={summary} contents={this.getContents(summary)} isSummary={true} />;
     return (

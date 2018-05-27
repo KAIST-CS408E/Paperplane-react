@@ -19,7 +19,17 @@ class SummaryNote extends Component {
         <h4 className="title is-4" style={styles.noteTitleStyle}>{note.title || 'No title'}</h4>
         {
           isSummary
-            ? <blockquote>{noteTag}</blockquote>
+            ?
+              (
+                <article class="message is-link">
+                  <div class="message-header">
+                    <strong>Summary</strong>
+                  </div>
+                  <div class="message-body">
+                    {noteTag}
+                  </div>
+                </article>
+              )
             : noteTag
         }
       </div>

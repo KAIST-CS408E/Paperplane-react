@@ -137,7 +137,7 @@ class Body extends Component {
   highlight_note_helper(para_name, string) {
     let section = parseInt(para_name.split('.')[0].substring(1));
     if (section)
-      this.addNote(section - 1, `Note about section ${section}`, `<blockquote>${string}</blockquote>`);
+      this.addNote(section - 1, `Note about section ${section}`, '', string);
   }
 
   getAnchorPosition(selection) {
@@ -318,7 +318,7 @@ class Body extends Component {
     }
   }
 
-  addNote(section, title, content) {
+  addNote(section, title, content, quote) {
     const { _id, _paperID } = this.state;
     this.setState(prevState => {
       let newNote = {
@@ -327,6 +327,7 @@ class Body extends Component {
         section: section,
         title: title || '',
         content: content || '',
+        quote: quote || '',
       };
       let prevNotes = prevState.notes;
       let noteList = [];
@@ -592,7 +593,7 @@ class Body extends Component {
         for (let j = 0 ; j < sectionNotes.length ; j += 1){
           let note = sectionNotes[j];
           ex.push(note);
-          noteComponent.push(<Note key={note._id} noteId={note._id} title={note.title} content={note.content} paper={paper} showModal={this.showModal} deleteNote={() => this.deleteNote(i, j)}/>);
+          noteComponent.push(<Note key={note._id} noteId={note._id} title={note.title} content={note.content} paper={paper} quote={note.quote} showModal={this.showModal} deleteNote={() => this.deleteNote(i, j)}/>);
         }
       }
     }

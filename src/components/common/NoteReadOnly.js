@@ -18,14 +18,15 @@ class NoteReadOnly extends Component {
       content: '',
       noteId: '',
       isHovering: false,
+      quote: '',
     };
     this.handleMouseHover = this.handleMouseHover.bind(this);
     this.popUpModalOnClick = debounce(this.popUpModalOnClick, 500);
   }
 
   componentWillMount() {
-    const { noteId, title, content } = this.props;
-    this.setState({ noteId, title, content });
+    const { noteId, title, content, quote } = this.props;
+    this.setState({ noteId, title, content, quote });
   }
 
   contentEmbeddedHTML() {
@@ -93,6 +94,9 @@ class NoteReadOnly extends Component {
     return (
         <Collapsible trigger={trigger} transitionTime={100}>
           <div class="card-content">
+            {
+              this.state.quote ? <div class="content"><blockquote>{this.state.quote}</blockquote></div> : null
+            }
             <div style={{marginBottom: '0', fontSize: '1.3rem'}} class="content" dangerouslySetInnerHTML={{__html: content}} />
 
           </div>

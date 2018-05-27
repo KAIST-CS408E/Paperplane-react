@@ -20,6 +20,7 @@ class Note extends Component {
       noteId: '',
       isHovering: false,
       editMode: false,
+      quote: '',
     };
 
     this.handleMouseOn = this.handleMouseOn.bind(this);
@@ -29,10 +30,10 @@ class Note extends Component {
   }
 
   componentWillMount() {
-    const { noteId, title, content, key } = this.props;
+    const { noteId, title, content, key, quote } = this.props;
     console.log('print key');
     console.log(key);
-    this.setState({ noteId, title, content });
+    this.setState({ noteId, title, content, quote });
   }
 
   componentDidMount() {
@@ -154,6 +155,9 @@ class Note extends Component {
       <Collapsible trigger={trigger} transitionTime={100}>
         {/*<TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} />*/}
         <div styles={styles.contentTextStyle} class="card-content">
+          {
+            this.state.quote ? <div class="content"><blockquote>{this.state.quote}</blockquote></div> : null
+          }
           {
             this.state.editMode ?
                 <TextArea html={contentEmbededHTML(this.state.content)} onChange={handleChange} /> :

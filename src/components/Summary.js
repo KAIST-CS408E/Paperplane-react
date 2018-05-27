@@ -82,7 +82,7 @@ class Summary extends Component {
               if (!(section.number - 1 in notesBySection)) return summarySections;
               return [
                 ...summarySections,
-                <SummarySection paper={paper} section={section} notes={notesBySection[section.number - 1] || []} />
+                <SummarySection paper={paper} section={section} notes={notesBySection[section.number - 1]} />
               ];
             }, [])
           }

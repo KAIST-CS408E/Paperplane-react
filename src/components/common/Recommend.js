@@ -28,7 +28,8 @@ const styles = {
   modalBackgroundStyle: {
     width: 'calc(100vw - 400px)',
     height: '180px',
-    top: '80%'
+    top: 'initial',
+    bottom: '30px',
   },
   modalStyle: {
     '-webkit-box-shadow': '2px 2px 2px 2px #bbb',

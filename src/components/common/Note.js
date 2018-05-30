@@ -74,6 +74,7 @@ class Note extends Component {
     const url = `${NOTE_URL}/${this.props.noteId}`;
     const { title, content, quote } = this.state;
     const data = { title, content, quote };
+    console.log(title);
     console.log(this.props.noteId);
     if (this.props.noteId) {
       axios.put(url, data)
@@ -145,7 +146,7 @@ class Note extends Component {
         (
             <header className="card-header">
               <div className="card-header-title" onKeyPress={(e) => this.onEnterKeyPress(e)} onClick={(e) => e.stopPropagation()}>
-                <TextArea html={this.state.title} onChange={event => this.setState({ title: event.target.value })} placeholder={'Write title!'} />
+                <TextArea html={this.state.title} onChange={(e, html) => {this.setState({ title: html })}} placeholder={'Write title!'} />
               </div>
             </header>
 
